@@ -27,46 +27,50 @@ import os
 # --- AUTHENTICATION ---
 
 def login_view(request):
+    # Ensure at least one Superadmin user exists in Firestore
+    try:
+        admin_query = db.collection('users').where('role', '==', 'Superadmin').limit(1).stream()
+        if not list(admin_query):
+            from django.contrib.auth.hashers import make_password
+            default_admin_uid = "system-admin-uid"
+            user_profile = {
+                "uid": default_admin_uid,
+                "email": "admin@techenablement.com",
+                "display_name": "System Admin",
+                "role": "Superadmin",
+                "status": "active",
+                "password": make_password("AdminPassword123!")
+            }
+            db.collection('users').document(default_admin_uid).set(user_profile)
+            log_audit("System", "Auto-create Admin", "Created default Superadmin user profile in Firestore", request)
+            print("Default System Admin user created in Firestore.")
+    except Exception as e:
+        print(f"Error checking/auto-creating admin user: {e}")
+
     if request.session.get('firebase_user'):
         return redirect('cms:dashboard')
         
     error_msg = None
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password', '').strip()
         
         try:
-            # Sign in with email and password via REST API
-            token_response = sign_in_with_email_and_password(email, password)
-            id_token = token_response['idToken']
-            
-            # Verify token on backend (allowing 60s clock skew to handle local clock variations)
-            decoded_token = firebase_auth.verify_id_token(id_token, clock_skew_seconds=60)
-            uid = decoded_token['uid']
-            
-            # Check user role in Firestore 'users'
-            user_doc = db.collection('users').document(uid).get()
-            if not user_doc.exists:
-                # If successfully authenticated with Firebase Auth, auto-recreate profile in Firestore
-                try:
-                    user_record = firebase_auth.get_user(uid)
-                    display_name = user_record.display_name or email.split('@')[0]
-                except Exception:
-                    display_name = email.split('@')[0]
+            # Query user by email from Firestore users collection
+            user_query = db.collection('users').where('email', '==', email).limit(1).stream()
+            user_docs = list(user_query)
+            if not user_docs:
+                raise Exception("Invalid email or password.")
                 
-                profile = {
-                    "uid": uid,
-                    "email": email,
-                    "display_name": display_name,
-                    "role": "Editor",
-                    "status": "active"
-                }
-                db.collection('users').document(uid).set(profile)
-                
-                # Log the auto-creation
-                log_audit("System", "User Profile Auto-recreated", f"Recreated profile for {email} after successful authentication", request)
-            else:
-                profile = user_doc.to_dict()
+            user_doc = user_docs[0]
+            profile = user_doc.to_dict()
+            uid = user_doc.id
+            
+            # Check hashed password
+            from django.contrib.auth.hashers import check_password
+            hashed_password = profile.get('password')
+            if not hashed_password or not check_password(password, hashed_password):
+                raise Exception("Invalid email or password.")
                 
             if profile.get('status') != 'active':
                 raise Exception("Your account has been deactivated.")
@@ -771,52 +775,22 @@ def tutorial_delete(request, id):
 @firebase_login_required
 def user_list(request):
     try:
-        # 1. Fetch all users from Firebase Auth directly
-        auth_users_page = firebase_auth.list_users()
+        # Fetch all users from Firestore directly
+        users_ref = db.collection('users').stream()
         users = []
-        
-        # Get all current Firestore profiles to map/reconcile locally
-        firestore_users = {doc.id: doc.to_dict() for doc in db.collection('users').stream()}
-        
-        for auth_user in auth_users_page.users:
-            uid = auth_user.uid
-            email = auth_user.email
-            display_name = auth_user.display_name or (email.split('@')[0] if email else "Unnamed User")
-            
-            # Retrieve or auto-heal Firestore profile
-            profile = firestore_users.get(uid)
-            if not profile:
-                role = 'Superadmin' if email == 'admin@techenablement.com' else 'Editor'
-                status = 'inactive' if auth_user.disabled else 'active'
-                profile = {
-                    'uid': uid,
-                    'email': email,
-                    'display_name': display_name,
-                    'role': role,
-                    'status': status
-                }
-                db.collection('users').document(uid).set(profile)
-            else:
-                # Sync Firestore status if it doesn't match the current Auth state
-                expected_status = 'inactive' if auth_user.disabled else 'active'
-                if profile.get('status') != expected_status:
-                    profile['status'] = expected_status
-                    db.collection('users').document(uid).update({'status': expected_status})
-            
+        for doc in users_ref:
+            profile = doc.to_dict()
+            profile['uid'] = doc.id
             users.append(profile)
-            
         return render(request, 'cms/user_list.html', {'users': users})
     except Exception as e:
-        messages.error(request, f"Failed to list users from Firebase Auth: {str(e)}")
-        # Fallback to pure Firestore query
-        users_ref = db.collection('users').stream()
-        users = [doc.to_dict() for doc in users_ref]
-        return render(request, 'cms/user_list.html', {'users': users})
+        messages.error(request, f"Failed to list users: {str(e)}")
+        return render(request, 'cms/user_list.html', {'users': []})
 
 @firebase_login_required
 def user_add(request):
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password', '').strip()
         display_name = request.POST.get('display_name', '').strip()
         role = request.POST.get('role', 'Editor').strip()
@@ -827,29 +801,27 @@ def user_add(request):
             return redirect('cms:user_add')
             
         try:
-            # 1. Create in Firebase Auth with the disabled status set directly
-            auth_user = firebase_auth.create_user(
-                email=email,
-                password=password,
-                display_name=display_name,
-                disabled=(status == 'inactive')
-            )
-            uid = auth_user.uid
-            
-            # 2. Save in Firestore users collection
+            # Check if user already exists
+            existing = db.collection('users').where('email', '==', email).limit(1).stream()
+            if list(existing):
+                raise Exception("User with this email already exists.")
+                
+            from django.contrib.auth.hashers import make_password
+            uid = uuid.uuid4().hex
             user_data = {
                 'uid': uid,
                 'email': email,
                 'display_name': display_name,
                 'role': role,
-                'status': status
+                'status': status,
+                'password': make_password(password)
             }
             db.collection('users').document(uid).set(user_data)
             
             user_email = request.session['firebase_user']['email']
             log_audit(user_email, "Create CMS User", f"Created CMS user '{display_name}' ({email}) (UID: {uid})", request)
             
-            messages.success(request, f"CMS User '{display_name}' created successfully in Auth & Database.")
+            messages.success(request, f"CMS User '{display_name}' created successfully.")
             return redirect('cms:user_list')
         except Exception as e:
             messages.error(request, f"Failed to create user: {str(e)}")
@@ -858,7 +830,7 @@ def user_add(request):
     return render(request, 'cms/user_form.html', {'action': 'Create'})
 
 @firebase_login_required
-def user_edit(request, id):  # id is the UID
+def user_edit(request, id):  # id is the UID/Document ID
     doc_ref = db.collection('users').document(id)
     doc = doc_ref.get()
     if not doc.exists:
@@ -877,27 +849,25 @@ def user_edit(request, id):  # id is the UID
             return redirect('cms:user_edit', id=id)
             
         try:
-            # 1. Update in Firebase Auth
-            update_args = {'display_name': display_name}
-            if password:
-                update_args['password'] = password
-            if status == 'active':
-                update_args['disabled'] = False
-            else:
-                update_args['disabled'] = True
-                
-            firebase_auth.update_user(id, **update_args)
-            
-            # 2. Update Firestore profile
-            doc_ref.update({
+            updates = {
                 'display_name': display_name,
                 'role': role,
                 'status': status
-            })
+            }
+            if password:
+                from django.contrib.auth.hashers import make_password
+                updates['password'] = make_password(password)
+                
+            doc_ref.update(updates)
             
             user_email = request.session['firebase_user']['email']
             log_audit(user_email, "Edit CMS User", f"Updated CMS user '{display_name}' (UID: {id})", request)
             
+            # If editing own profile, update session as well
+            if id == request.session['firebase_user']['uid']:
+                request.session['firebase_user']['display_name'] = display_name
+                request.session['firebase_user']['role'] = role
+                
             messages.success(request, f"CMS User '{display_name}' updated successfully.")
             return redirect('cms:user_list')
         except Exception as e:
@@ -907,7 +877,7 @@ def user_edit(request, id):  # id is the UID
     return render(request, 'cms/user_form.html', {'action': 'Edit', 'cms_user': user})
 
 @firebase_login_required
-def user_delete(request, id):  # id is the UID
+def user_delete(request, id):  # id is the UID/Document ID
     doc_ref = db.collection('users').document(id)
     doc = doc_ref.get()
     if not doc.exists:
@@ -921,10 +891,6 @@ def user_delete(request, id):  # id is the UID
         return redirect('cms:user_list')
         
     try:
-        # 1. Delete in Firebase Auth
-        firebase_auth.delete_user(id)
-        
-        # 2. Delete Firestore profile
         doc_ref.delete()
         
         user_email = request.session['firebase_user']['email']
@@ -932,7 +898,7 @@ def user_delete(request, id):  # id is the UID
         
         messages.warning(request, f"CMS User '{user.get('display_name')}' deleted successfully.")
     except Exception as e:
-        messages.error(request, f"Failed to delete user from Firebase Auth: {str(e)}")
+        messages.error(request, f"Failed to delete user: {str(e)}")
         
     return redirect('cms:user_list')
 

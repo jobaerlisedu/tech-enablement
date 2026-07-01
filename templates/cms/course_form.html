@@ -33,7 +33,7 @@
             <!-- Status -->
             <div class="form-group">
                 <label for="status">Publication Status *</label>
-                <select id="status" name="status" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="status" name="status" class="form-control" required>
                     <option value="draft" {% if course.status == 'draft' %}selected{% endif %}>Draft</option>
                     <option value="published" {% if course.status == 'published' %}selected{% endif %}>Published</option>
                 </select>
@@ -42,7 +42,7 @@
             <!-- Category -->
             <div class="form-group">
                 <label for="category_id">Category *</label>
-                <select id="category_id" name="category_id" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="category_id" name="category_id" class="form-control" required>
                     <option value="">Select Category...</option>
                     {% for cat in categories %}
                     <option value="{{ cat.id }}" {% if course.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
@@ -53,7 +53,7 @@
             <!-- Author -->
             <div class="form-group">
                 <label for="author_id">Instructor *</label>
-                <select id="author_id" name="author_id" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="author_id" name="author_id" class="form-control" required>
                     <option value="">Select Instructor...</option>
                     {% for auth in authors %}
                     <option value="{{ auth.id }}" {% if course.author_id == auth.id %}selected{% endif %}>{{ auth.name }}</option>

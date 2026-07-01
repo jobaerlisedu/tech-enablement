@@ -1,5 +1,7 @@
 import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
+django.setup()
 from datetime import datetime, timedelta
 
 # Set up environment variables
@@ -345,25 +347,11 @@ You are now a certified master of this course!
 
     print("Seeded course tutorials.")
 
-    # 7. Create admin user in Firebase Auth and Firestore users collection
+    # 7. Create admin user directly in Firestore users collection (with hashed password)
+    from django.contrib.auth.hashers import make_password
     admin_email = "admin@techenablement.com"
     admin_password = "AdminPassword123!"
-    admin_uid = None
-
-    try:
-        user = auth.get_user_by_email(admin_email)
-        admin_uid = user.uid
-        print(f"Admin user already exists in Firebase Auth (UID: {admin_uid}).")
-    except auth.UserNotFoundError:
-        user = auth.create_user(
-            email=admin_email,
-            email_verified=True,
-            password=admin_password,
-            display_name="System Admin",
-            disabled=False
-        )
-        admin_uid = user.uid
-        print(f"Created admin user in Firebase Auth (UID: {admin_uid}). Credentials: {admin_email} / {admin_password}")
+    admin_uid = "system-admin-uid"
 
     # Set profile in Firestore users collection
     user_profile = {
@@ -371,7 +359,8 @@ You are now a certified master of this course!
         "email": admin_email,
         "display_name": "System Admin",
         "role": "Superadmin",
-        "status": "active"
+        "status": "active",
+        "password": make_password(admin_password)
     }
     db.collection('users').document(admin_uid).set(user_profile)
     print("Admin user profile seeded in Firestore 'users' collection.")

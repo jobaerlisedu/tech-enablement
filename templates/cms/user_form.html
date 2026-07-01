@@ -43,7 +43,7 @@
             <!-- Role -->
             <div class="form-group">
                 <label for="role">System Role *</label>
-                <select id="role" name="role" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="role" name="role" class="form-control" required>
                     <option value="Editor" {% if cms_user.role == 'Editor' %}selected{% endif %}>Editor</option>
                     <option value="Superadmin" {% if cms_user.role == 'Superadmin' %}selected{% endif %}>Superadmin</option>
                 </select>
@@ -52,7 +52,7 @@
             <!-- Status -->
             <div class="form-group">
                 <label for="status">User Account Status *</label>
-                <select id="status" name="status" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="status" name="status" class="form-control" required>
                     <option value="active" {% if cms_user.status == 'active' %}selected{% endif %}>Active</option>
                     <option value="inactive" {% if cms_user.status == 'inactive' %}selected{% endif %}>Deactivated / Blocked</option>
                 </select>

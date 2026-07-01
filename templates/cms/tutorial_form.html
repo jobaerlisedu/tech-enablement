@@ -24,7 +24,7 @@
             <!-- Associated Course -->
             <div class="form-group">
                 <label for="course_id">Select Course *</label>
-                <select id="course_id" name="course_id" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="course_id" name="course_id" class="form-control" required>
                     <option value="">Select Course...</option>
                     {% for c in courses %}
                     <option value="{{ c.id }}" {% if tutorial.course_id == c.id %}selected{% endif %}>{{ c.title }}</option>
@@ -53,7 +53,7 @@
             <!-- Status -->
             <div class="form-group">
                 <label for="status">Lesson Status *</label>
-                <select id="status" name="status" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                <select id="status" name="status" class="form-control" required>
                     <option value="published" {% if tutorial.status == 'published' %}selected{% endif %}>Active</option>
                     <option value="draft" {% if tutorial.status == 'draft' %}selected{% endif %}>Draft/Hidden</option>
                 </select>
