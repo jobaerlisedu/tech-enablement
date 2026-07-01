@@ -104,3 +104,38 @@ python manage.py runserver 0.0.0.0:8000
 ## 🔑 Default Administrator Credentials
 *   **Admin Email**: `admin@techenablement.com`
 *   **Admin Password**: `AdminPassword123!`
+
+---
+
+## ☁️ Deploying to Render.com
+
+To deploy this application to **Render**, follow these steps:
+
+1. **Push Changes to GitHub**:
+   Ensure all changes are pushed to your GitHub repository:
+   ```bash
+   git push origin main
+   ```
+2. **Create a New Web Service on Render**:
+   - Log into your Render dashboard and click **New > Web Service**.
+   - Connect your GitHub repository.
+3. **Configure Service Settings**:
+   - **Runtime**: `Python`
+   - **Build Command**: `./build.sh`
+   - **Start Command**: `gunicorn config.wsgi:application`
+4. **Configure Environment Variables**:
+   In the **Environment** tab of your Render service, add all variables defined in your local `.env` file (excluding `DEBUG=True` for security, or setting it to `False`):
+   - `DJANGO_SECRET_KEY`: (generate a strong secret key)
+   - `DEBUG`: `False`
+   - `ALLOWED_HOSTS`: `your-render-app-subdomain.onrender.com`
+   - `FIREBASE_PROJECT_ID`: (your Firebase project ID)
+   - `FIREBASE_STORAGE_BUCKET`: (your storage bucket)
+   - `FIREBASE_API_KEY`: (your Firebase Web API key)
+   - `FIREBASE_AUTH_DOMAIN`: (your Firebase Auth domain)
+5. **Set Firebase Service Account Credentials**:
+   To securely pass the contents of `firebase-credentials.json` without committing the file to Git:
+   - On the Render dashboard, go to the **Environment** tab of your service.
+   - Click **Add File**.
+   - Set the filename to `firebase-credentials.json`.
+   - Copy and paste the entire JSON content of your local `firebase-credentials.json` into the file content text area and save.
+
