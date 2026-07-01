@@ -40,8 +40,8 @@ def login_view(request):
             token_response = sign_in_with_email_and_password(email, password)
             id_token = token_response['idToken']
             
-            # Verify token on backend
-            decoded_token = firebase_auth.verify_id_token(id_token)
+            # Verify token on backend (allowing 60s clock skew to handle local clock variations)
+            decoded_token = firebase_auth.verify_id_token(id_token, clock_skew_seconds=60)
             uid = decoded_token['uid']
             
             # Check user role in Firestore 'users'

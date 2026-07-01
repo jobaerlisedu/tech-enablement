@@ -25,8 +25,8 @@
         <div class="hero-glow-card glass">
             <!-- Glowing tech logo mockup -->
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; color: var(--accent);">
-                <i data-lucide="cpu" style="width: 80px; height: 80px; stroke-width: 1.2; filter: drop-shadow(0 0 15px var(--accent));"></i>
-                <h3 style="font-size: 1.8rem; background: linear-gradient(135deg, #ffffff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tech Enablement</h3>
+                <i data-lucide="cpu" style="width: 80px; height: 80px; stroke-width: 1.2;"></i>
+                <h3 style="font-size: 1.8rem; background: linear-gradient(135deg, var(--bs-heading-color), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Tech Enablement</h3>
                 <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 250px;">A modern content system integrated with Python Django and Google Firebase.</p>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 <div class="card-meta">
                     <img src="{{ blog.author.profile_image }}" alt="{{ blog.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
                     <div>
-                        <div style="font-weight: 600; color: #ffffff;">{{ blog.author.name }}</div>
+                        <div style="font-weight: 600;">{{ blog.author.name }}</div>
                         <div style="font-size: 0.75rem;">{{ blog.publish_date|date:"M d, Y" }}</div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                 <div class="card-meta">
                     <img src="{{ course.author.profile_image }}" alt="{{ course.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
                     <div>
-                        <div style="font-weight: 600; color: #ffffff;">{{ course.author.name }}</div>
+                        <div style="font-weight: 600;">{{ course.author.name }}</div>
                         <div style="font-size: 0.75rem;">Instructor</div>
                     </div>
                 </div>

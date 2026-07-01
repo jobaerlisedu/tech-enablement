@@ -36,7 +36,7 @@
                 <div class="card-meta">
                     <img src="{{ blog.author.profile_image }}" alt="{{ blog.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
                     <div>
-                        <div style="font-weight: 600; color: #ffffff;">{{ blog.author.name }}</div>
+                        <div style="font-weight: 600;">{{ blog.author.name }}</div>
                         <div style="font-size: 0.75rem;">{{ blog.publish_date|date:"M d, Y" }}</div>
                     </div>
                 </div>
@@ -157,7 +157,6 @@
             toast.style.bottom = '20px';
             toast.style.right = '20px';
             toast.style.zIndex = '1000';
-            toast.style.boxShadow = '0 4px 15px rgba(0,0,0,0.5)';
             toast.style.display = 'flex';
             toast.style.alignItems = 'center';
             toast.style.gap = '10px';

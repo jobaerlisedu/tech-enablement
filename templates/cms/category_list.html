@@ -28,7 +28,7 @@
             <tbody>
                 {% for cat in categories %}
                 <tr>
-                    <td style="font-weight: 600; color: #ffffff;">{{ cat.name }}</td>
+                    <td style="font-weight: 600;">{{ cat.name }}</td>
                     <td><code>{{ cat.slug }}</code></td>
                     <td style="color: var(--text-muted); max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ cat.description|default:"No description provided" }}</td>
                     <td style="text-align: right;">

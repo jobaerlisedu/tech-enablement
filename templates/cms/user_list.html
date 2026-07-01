@@ -29,7 +29,7 @@
             <tbody>
                 {% for user in users %}
                 <tr>
-                    <td style="font-weight: 600; color: #ffffff;">{{ user.display_name }}</td>
+                    <td style="font-weight: 600;">{{ user.display_name }}</td>
                     <td><code>{{ user.email }}</code></td>
                     <td>
                         {% if user.role == 'Superadmin' %}

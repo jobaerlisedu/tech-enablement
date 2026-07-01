@@ -34,7 +34,7 @@
                     <td>
                         <img src="{{ blog.cover_image }}" alt="Cover" style="width: 55px; height: 35px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);" onerror="this.src='https://picsum.photos/100/70'">
                     </td>
-                    <td style="font-weight: 600; color: #ffffff; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ blog.title }}</td>
+                    <td style="font-weight: 600; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ blog.title }}</td>
                     <td>{{ blog.category.name }}</td>
                     <td>{{ blog.author.name }}</td>
                     <td>{{ blog.publish_date|date:"M d, Y" }}</td>

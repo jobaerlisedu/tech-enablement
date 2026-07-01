@@ -26,7 +26,7 @@
                 {% for log in logs %}
                 <tr>
                     <td><code style="color: var(--accent);">{{ log.timestamp|date:"Y-m-d H:i:s" }}</code></td>
-                    <td style="font-weight: 600; color: #ffffff;">{{ log.user_email }}</td>
+                    <td style="font-weight: 600;">{{ log.user_email }}</td>
                     <td>
                         <span class="badge {% if 'Delete' in log.action or 'Remove' in log.action %}badge-superadmin{% else %}badge-editor{% endif %}">
                             {{ log.action }}
