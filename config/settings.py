@@ -27,6 +27,33 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-x(5ex#=l#uggghf+u9%
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# CSRF Trusted Origins configuration for Django 4.0+ secure requests
+CSRF_TRUSTED_ORIGINS = []
+csrf_trusted_env = os.getenv('CSRF_TRUSTED_ORIGINS')
+if csrf_trusted_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_env.split(',') if origin.strip()]
+else:
+    # Automatically derive trusted origins from ALLOWED_HOSTS
+    for host in ALLOWED_HOSTS:
+        host = host.strip()
+        if host:
+            if host == '*':
+                # Local development defaults
+                CSRF_TRUSTED_ORIGINS.extend(['http://localhost:8000', 'http://127.0.0.1:8000'])
+            elif host.startswith('.'):
+                CSRF_TRUSTED_ORIGINS.append(f'https://*{host}')
+                CSRF_TRUSTED_ORIGINS.append(f'http://*{host}')
+            elif host.startswith('*.'):
+                CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
+                CSRF_TRUSTED_ORIGINS.append(f'http://{host}')
+            else:
+                CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
+                CSRF_TRUSTED_ORIGINS.append(f'http://{host}')
+
+# Deduplicate list
+CSRF_TRUSTED_ORIGINS = list(set(CSRF_TRUSTED_ORIGINS))
+
+
 
 # Application definition
 
