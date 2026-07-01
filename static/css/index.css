@@ -2,7 +2,7 @@
 
 :root {
     /* User Color Scheme variables */
-    --bs-body-bg: #ffffff;
+    --bs-body-bg: #f4f9f4;
     --bs-body-color: #494B5B;
     --bs-primary: #215C5C;
     --bs-primary-rgb: 33, 92, 92;
@@ -551,7 +551,7 @@ a {
     width: 450px;
     height: 450px;
     border-radius: 30px;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+    background: linear-gradient(135deg, rgba(33, 92, 92, 0.08), rgba(117, 182, 110, 0.15));
     border: 1px solid rgba(255, 255, 255, 0.08);
     position: relative;
     display: flex;
