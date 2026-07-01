@@ -133,9 +133,17 @@ To deploy this application to **Render**, follow these steps:
    - `FIREBASE_API_KEY`: (your Firebase Web API key)
    - `FIREBASE_AUTH_DOMAIN`: (your Firebase Auth domain)
 5. **Set Firebase Service Account Credentials**:
-   To securely pass the contents of `firebase-credentials.json` without committing the file to Git:
-   - On the Render dashboard, go to the **Environment** tab of your service.
-   - Click **Add File**.
-   - Set the filename to `firebase-credentials.json`.
-   - Copy and paste the entire JSON content of your local `firebase-credentials.json` into the file content text area and save.
+   To securely pass the Firebase service account credentials without committing the file to Git, choose one of these methods:
+
+   * **Option A (Recommended - Environment Variable)**:
+     - On the Render dashboard, go to the **Environment** tab of your service.
+     - Click **Add Environment Variable**.
+     - Set the key to `FIREBASE_CREDENTIALS_JSON`.
+     - Copy and paste the entire raw JSON content of your `firebase-credentials.json` file into the value text area and save.
+
+   * **Option B (Secret File)**:
+     - On the Render dashboard, go to the **Environment** tab of your service.
+     - Click **Add File**.
+     - Set the filename to `firebase-credentials.json`.
+     - Copy and paste the entire JSON content of your local `firebase-credentials.json` into the file content text area and save.
 

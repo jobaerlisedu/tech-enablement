@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, storage
@@ -6,15 +7,39 @@ from datetime import datetime
 
 # Build paths inside the project
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-cred_path = os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-credentials.json')
-if not os.path.isabs(cred_path):
-    cred_path = os.path.join(BASE_DIR, cred_path)
 
 bucket_name = os.getenv('FIREBASE_STORAGE_BUCKET')
 
 # Initialize Admin SDK if not already done
 if not firebase_admin._apps:
-    cred = credentials.Certificate(cred_path)
+    cred = None
+    
+    # 1. Try loading credentials from the environment variable (raw JSON string)
+    cred_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+    if cred_json:
+        try:
+            cred_dict = json.loads(cred_json)
+            cred = credentials.Certificate(cred_dict)
+            print("Firebase Admin SDK initialized using FIREBASE_CREDENTIALS_JSON environment variable.")
+        except Exception as e:
+            print(f"Error parsing FIREBASE_CREDENTIALS_JSON: {e}")
+            
+    # 2. Try loading from the file path if not loaded via env variable
+    if not cred:
+        cred_path = os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-credentials.json')
+        if not os.path.isabs(cred_path):
+            cred_path = os.path.join(BASE_DIR, cred_path)
+            
+        if os.path.exists(cred_path):
+            cred = credentials.Certificate(cred_path)
+            print(f"Firebase Admin SDK initialized using certificate file at: {cred_path}")
+        else:
+            raise FileNotFoundError(
+                f"Firebase credentials not found. Please provide credentials via the "
+                f"FIREBASE_CREDENTIALS_JSON environment variable, or place your service account "
+                f"JSON file at '{cred_path}'."
+            )
+
     firebase_admin.initialize_app(cred, {
         'storageBucket': bucket_name
     })
