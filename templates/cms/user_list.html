@@ -1,0 +1,76 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}User Management | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">CMS User Management</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">Manage administrator and editor permissions synced with Firebase Auth.</p>
+    </div>
+    <a href="{% url 'cms:user_add' %}" class="btn btn-primary btn-sm">
+        <i data-lucide="user-plus"></i>
+        <span>Add CMS User</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <div class="table-wrapper">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th>Display Name</th>
+                    <th>Email Address</th>
+                    <th>System Role</th>
+                    <th>User Status</th>
+                    <th style="text-align: right; width: 120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td style="font-weight: 600; color: #ffffff;">{{ user.display_name }}</td>
+                    <td><code>{{ user.email }}</code></td>
+                    <td>
+                        {% if user.role == 'Superadmin' %}
+                        <span class="badge badge-superadmin">Superadmin</span>
+                        {% else %}
+                        <span class="badge badge-editor">Editor</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.status == 'active' %}
+                        <span class="badge badge-active">Active</span>
+                        {% else %}
+                        <span class="badge badge-inactive">Deactivated</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="action-buttons" style="justify-content: flex-end;">
+                            <a href="{% url 'cms:user_edit' id=user.uid %}" class="action-btn action-btn-edit" title="Edit User">
+                                <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                            </a>
+                            {% if request.session.firebase_user.uid != user.uid %}
+                            <a href="{% url 'cms:user_delete' id=user.uid %}" class="action-btn action-btn-delete" title="Delete User" onclick="return confirm('Are you sure you want to delete user \'{{ user.display_name }}\'? This deletes their Firebase authentication profile as well.');">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </a>
+                            {% else %}
+                            <span class="action-btn" style="opacity: 0.2; cursor: not-allowed;" title="Self-deletion locked">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                        No CMS users found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Structured Courses | Tech Enablement{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="page-header">
+        <h1 class="page-title">Structured Courses</h1>
+        <p class="page-subtitle">Learn step-by-step through our structured, tutorial-based curriculum.</p>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-wrapper">
+        <form method="GET" action="{% url 'frontend:courses' %}">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search courses, categories, or instructors..." class="search-input">
+            {% if query %}
+            <a href="{% url 'frontend:courses' %}" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); hover { color: #ffffff; }">
+                <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Courses Grid (4 cols x 5 rows) -->
+    <div class="card-grid">
+        {% for course in courses %}
+        <article class="item-card glass">
+            <div class="card-img-wrapper">
+                <img src="{{ course.cover_image }}" alt="{{ course.title }}" class="card-img" onerror="this.src='https://picsum.photos/800/600'">
+                <span class="card-badge">{{ course.category.name }}</span>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">{{ course.title }}</h3>
+                <p class="card-summary">{{ course.summary }}</p>
+                <div class="card-meta">
+                    <img src="{{ course.author.profile_image }}" alt="{{ course.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
+                    <div>
+                        <div style="font-weight: 600; color: #ffffff;">{{ course.author.name }}</div>
+                        <div style="font-size: 0.75rem;">Instructor</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'frontend:course_detail' slug=course.slug %}" class="btn btn-primary btn-sm btn-card-action">
+                        <span>Get Started</span>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div style="color: var(--text-muted); text-align: center; grid-column: span 4; padding: 60px 0;">
+            <i data-lucide="book-x" style="width: 48px; height: 48px; stroke-width: 1.5; margin-bottom: 15px; color: var(--text-muted);"></i>
+            <h3>No courses found</h3>
+            <p style="margin-top: 5px;">Try searching for a different keyword or category.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination System -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        <!-- Prev Arrow -->
+        <a href="?page={{ prev_page }}{% if query %}&q={{ query }}{% endif %}" class="page-arrow {% if not has_prev %}disabled{% endif %}">
+            <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
+        </a>
+        
+        <!-- Page Numbers -->
+        {% for num in page_numbers %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-num {% if num == page %}active{% endif %}">{{ num }}</a>
+        {% endfor %}
+        
+        <!-- Next Arrow -->
+        <a href="?page={{ next_page }}{% if query %}&q={{ query }}{% endif %}" class="page-arrow {% if not has_next %}disabled{% endif %}">
+            <i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

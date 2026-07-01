@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Research Blogs | Tech Enablement{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="page-header">
+        <h1 class="page-title">Research Blogs</h1>
+        <p class="page-subtitle">Deep dive articles, software guides, and technical tutorials.</p>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-wrapper">
+        <form method="GET" action="{% url 'frontend:blogs' %}">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search blogs, categories, or authors..." class="search-input">
+            {% if query %}
+            <a href="{% url 'frontend:blogs' %}" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); hover { color: #ffffff; }">
+                <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Blogs Grid (4 cols x 5 rows) -->
+    <div class="card-grid">
+        {% for blog in blogs %}
+        <article class="item-card glass">
+            <div class="card-img-wrapper">
+                <img src="{{ blog.cover_image }}" alt="{{ blog.title }}" class="card-img" onerror="this.src='https://picsum.photos/800/600'">
+                <span class="card-badge">{{ blog.category.name }}</span>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">{{ blog.title }}</h3>
+                <p class="card-summary">{{ blog.summary }}</p>
+                <div class="card-meta">
+                    <img src="{{ blog.author.profile_image }}" alt="{{ blog.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
+                    <div>
+                        <div style="font-weight: 600; color: #ffffff;">{{ blog.author.name }}</div>
+                        <div style="font-size: 0.75rem;">{{ blog.publish_date|date:"M d, Y" }}</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'frontend:blog_detail' slug=blog.slug %}" class="btn btn-primary btn-sm btn-card-action">Read More</a>
+                    
+                    <!-- Social Share Toggle -->
+                    <div class="share-dropdown">
+                        <button class="btn-share" onclick="toggleShare(event, 'share-{{ blog.id }}')" title="Share this blog">
+                            <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <!-- Social Menu -->
+                        <div class="share-menu" id="share-{{ blog.id }}">
+                            <div class="share-menu-item" data-title="{{ blog.title }}" data-path="{% url 'frontend:blog_detail' slug=blog.slug %}" onclick="shareSocial('twitter', this)">
+                                <i data-lucide="twitter" style="width: 14px; height: 14px; color: #1da1f2;"></i>
+                                <span>Twitter</span>
+                            </div>
+                            <div class="share-menu-item" data-title="{{ blog.title }}" data-path="{% url 'frontend:blog_detail' slug=blog.slug %}" onclick="shareSocial('facebook', this)">
+                                <i data-lucide="facebook" style="width: 14px; height: 14px; color: #1877f2;"></i>
+                                <span>Facebook</span>
+                            </div>
+                            <div class="share-menu-item" data-title="{{ blog.title }}" data-path="{% url 'frontend:blog_detail' slug=blog.slug %}" onclick="shareSocial('linkedin', this)">
+                                <i data-lucide="linkedin" style="width: 14px; height: 14px; color: #0a66c2;"></i>
+                                <span>LinkedIn</span>
+                            </div>
+                            <div class="share-menu-item" data-path="{% url 'frontend:blog_detail' slug=blog.slug %}" onclick="copyLink(this)">
+                                <i data-lucide="link" style="width: 14px; height: 14px; color: #10b981;"></i>
+                                <span>Copy Link</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div style="color: var(--text-muted); text-align: center; grid-column: span 4; padding: 60px 0;">
+            <i data-lucide="file-warning" style="width: 48px; height: 48px; stroke-width: 1.5; margin-bottom: 15px; color: var(--text-muted);"></i>
+            <h3>No blogs found</h3>
+            <p style="margin-top: 5px;">Try searching for a different keyword or category.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination System -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        <!-- Prev Arrow -->
+        <a href="?page={{ prev_page }}{% if query %}&q={{ query }}{% endif %}" class="page-arrow {% if not has_prev %}disabled{% endif %}">
+            <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
+        </a>
+        
+        <!-- Page Numbers -->
+        {% for num in page_numbers %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-num {% if num == page %}active{% endif %}">{{ num }}</a>
+        {% endfor %}
+        
+        <!-- Next Arrow -->
+        <a href="?page={{ next_page }}{% if query %}&q={{ query }}{% endif %}" class="page-arrow {% if not has_next %}disabled{% endif %}">
+            <i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle social share dropdown
+    function toggleShare(event, menuId) {
+        event.stopPropagation();
+        
+        // Hide all other share menus first
+        const allMenus = document.querySelectorAll('.share-menu');
+        allMenus.forEach(menu => {
+            if (menu.id !== menuId) {
+                menu.classList.remove('show');
+            }
+        });
+        
+        // Toggle active menu
+        const menu = document.getElementById(menuId);
+        menu.classList.toggle('show');
+    }
+
+    // Hide share menus on body click
+    document.body.addEventListener('click', function() {
+        const allMenus = document.querySelectorAll('.share-menu');
+        allMenus.forEach(menu => menu.classList.remove('show'));
+    });
+
+    // Social Sharing Handler
+    function shareSocial(platform, element) {
+        const title = element.getAttribute('data-title');
+        const path = element.getAttribute('data-path');
+        const url = window.location.origin + path;
+        let shareUrl = '';
+        
+        if (platform === 'twitter') {
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+        } else if (platform === 'facebook') {
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        } else if (platform === 'linkedin') {
+            shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
+        }
+        
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+
+    // Clipboard Copy Handler
+    function copyLink(element) {
+        const path = element.getAttribute('data-path');
+        const url = window.location.origin + path;
+        navigator.clipboard.writeText(url).then(() => {
+            // Create a temporary toast alert
+            const toast = document.createElement('div');
+            toast.className = 'alert alert-success';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '1000';
+            toast.style.boxShadow = '0 4px 15px rgba(0,0,0,0.5)';
+            toast.style.display = 'flex';
+            toast.style.alignItems = 'center';
+            toast.style.gap = '10px';
+            toast.innerHTML = `<i data-lucide="check-circle" style="color:#10b981;width:18px;height:18px;"></i> <span>Blog link copied to clipboard!</span>`;
+            
+            document.body.appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.6s ease';
+                setTimeout(() => toast.remove(), 600);
+            }, 3000);
+        }).catch(err => {
+            console.error('Could not copy link: ', err);
+        });
+    }
+</script>
+{% endblock %}

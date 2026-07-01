@@ -1,0 +1,67 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}CMS Documentation | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">CMS Documentations</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">Helpful guides, markdown templates, and user instructions.</p>
+    </div>
+</div>
+
+<div class="cms-card glass docs-content">
+    <div class="docs-section">
+        <h3>1. Getting Started with the CMS</h3>
+        <p>This CMS enables editors to publish research blogs and manage structured learning courses connected directly to Google Firebase. Because all content is stored as document records in Firestore, updates are instantly synchronized to visitors on the frontend.</p>
+    </div>
+
+    <div class="docs-section" style="border-top: 1px solid var(--border-color); padding-top: 25px;">
+        <h3>2. Writing in Markdown</h3>
+        <p>Both Research Blogs and Tutorial Lessons accept standard GitHub Flavored Markdown (GFM). Below is a quick template you can copy and modify in the editor:</p>
+        
+        <pre class="docs-code-example"># Large Header (H1)
+
+This is a paragraph with **bold text** and *italicized text*.
+
+## Section Header (H2)
+
+Here is a list of features:
+- Core concept 1
+- Core concept 2
+
+### Syntax Highlighted Code
+
+Use triple backticks to render language-specific highlights:
+
+```python
+# A simple python class
+class User:
+    def __init__(self, name):
+        self.name = name
+```
+
+### Structured Tables
+
+| Feature | Support | Performance |
+| :--- | :---: | ---: |
+| Firestore | Yes | Fast |
+| Storage | Yes | Auto |</pre>
+    </div>
+
+    <div class="docs-section" style="border-top: 1px solid var(--border-color); padding-top: 25px;">
+        <h3>3. Managing Courses & Tutorial Lessons</h3>
+        <p>To construct a structured course:</p>
+        <ol style="margin-left: 20px; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px;">
+            <li>First, register a <strong>Category</strong> and an <strong>Author/Instructor</strong>.</li>
+            <li>Create the <strong>Course</strong> in the Course Management panel. Set the <em>Display Sequence Order</em> (e.g., 1 for first, 2 for second) to order cards.</li>
+            <li>Create <strong>Lessons</strong> under Tutorial Management, linking them to your Course. Give each lesson an <em>Order Number</em> (e.g., 1 for introduction, 2 for environment setup) so students can click Next/Prev to walk through the course in the correct sequence.</li>
+        </ol>
+    </div>
+
+    <div class="docs-section" style="border-top: 1px solid var(--border-color); padding-top: 25px;">
+        <h3>4. File Uploads & Storage Bucket</h3>
+        <p>When creating authors, blogs, or courses, you can select an image file to upload directly to Google Firebase Storage. The system automatically handles name conflicts, uploads the file, sets its permissions to public read, and retrieves the URL to store inside your Firestore document records.</p>
+    </div>
+</div>
+{% endblock %}

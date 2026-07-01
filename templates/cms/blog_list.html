@@ -1,0 +1,70 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}Research Blogs | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">Research Blogs</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">Create, edit and manage research publications.</p>
+    </div>
+    <a href="{% url 'cms:blog_add' %}" class="btn btn-primary btn-sm">
+        <i data-lucide="plus"></i>
+        <span>Write Blog</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <div class="table-wrapper">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th>Cover</th>
+                    <th>Blog Title</th>
+                    <th>Category</th>
+                    <th>Author</th>
+                    <th>Publish Date</th>
+                    <th>Status</th>
+                    <th style="text-align: right; width: 120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for blog in blogs %}
+                <tr>
+                    <td>
+                        <img src="{{ blog.cover_image }}" alt="Cover" style="width: 55px; height: 35px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);" onerror="this.src='https://picsum.photos/100/70'">
+                    </td>
+                    <td style="font-weight: 600; color: #ffffff; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ blog.title }}</td>
+                    <td>{{ blog.category.name }}</td>
+                    <td>{{ blog.author.name }}</td>
+                    <td>{{ blog.publish_date|date:"M d, Y" }}</td>
+                    <td>
+                        {% if blog.status == 'published' %}
+                        <span class="badge badge-published">Published</span>
+                        {% else %}
+                        <span class="badge badge-draft">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="action-buttons" style="justify-content: flex-end;">
+                            <a href="{% url 'cms:blog_edit' id=blog.id %}" class="action-btn action-btn-edit" title="Edit Blog">
+                                <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                            </a>
+                            <a href="{% url 'cms:blog_delete' id=blog.id %}" class="action-btn action-btn-delete" title="Delete Blog" onclick="return confirm('Are you sure you want to delete blog \'{{ blog.title }}\'?');">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                        No blog posts found. Click 'Write Blog' to start publishing.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

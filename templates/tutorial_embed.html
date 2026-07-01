@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ tutorial.title }}</title>
+    
+    <!-- Outfit & Inter Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Highlight.js CSS for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    
+    <!-- Core embed styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0d1117; /* GitHub Dark BG */
+            color: #c9d1d9; /* Muted text */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        /* Title styling */
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 6px;
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #c9d1d9;
+        }
+
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        pre {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 0.88rem;
+            background-color: rgba(110, 118, 129, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #f0f6fc;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: #e6edf3;
+            font-size: 0.85rem;
+            display: block;
+        }
+
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        blockquote {
+            padding: 0 16px;
+            color: #8b949e;
+            border-left: 4px solid #30363d;
+            margin-bottom: 16px;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        table th, table td {
+            padding: 8px 13px;
+            border: 1px solid #30363d;
+        }
+
+        table th {
+            font-weight: 600;
+            background-color: #161b22;
+            color: #ffffff;
+        }
+
+        table tr:nth-child(2val) {
+            background-color: #0d1117;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+    </style>
+</head>
+<body>
+    <div id="content-container">
+        <h1>{{ tutorial.title }}</h1>
+        <div id="markdown-output">Loading content...</div>
+    </div>
+
+    <!-- Hidden Raw Markdown Data -->
+    <script type="text/plain" id="raw-markdown-data">{{ tutorial.content }}</script>
+
+    <!-- Markdown Parser & Code Highlighter -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rawContent = document.getElementById("raw-markdown-data").textContent;
+            const targetDiv = document.getElementById("markdown-output");
+            
+            // Configure marked syntax highlight
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                },
+                gfm: true,
+                breaks: true
+            });
+            
+            // Compile marked to html
+            targetDiv.innerHTML = marked.parse(rawContent);
+        });
+    </script>
+</body>
+</html>

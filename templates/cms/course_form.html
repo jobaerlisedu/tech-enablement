@@ -1,0 +1,118 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}{{ action }} Course | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">{{ action }} Course</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">{{ action }} curriculum details for course-based blogs.</p>
+    </div>
+    <a href="{% url 'cms:course_list' %}" class="btn btn-secondary btn-sm">
+        <i data-lucide="arrow-left"></i>
+        <span>Cancel</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-grid">
+            <!-- Title -->
+            <div class="form-group form-full">
+                <label for="title">Course Title *</label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ course.title }}" required placeholder="e.g. Django Masterclass" onkeyup="generateSlug()">
+            </div>
+            
+            <!-- Slug -->
+            <div class="form-group">
+                <label for="slug">URL Slug *</label>
+                <input type="text" id="slug" name="slug" class="form-control" value="{{ course.slug }}" required placeholder="e.g. django-masterclass">
+            </div>
+            
+            <!-- Status -->
+            <div class="form-group">
+                <label for="status">Publication Status *</label>
+                <select id="status" name="status" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="draft" {% if course.status == 'draft' %}selected{% endif %}>Draft</option>
+                    <option value="published" {% if course.status == 'published' %}selected{% endif %}>Published</option>
+                </select>
+            </div>
+            
+            <!-- Category -->
+            <div class="form-group">
+                <label for="category_id">Category *</label>
+                <select id="category_id" name="category_id" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="">Select Category...</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if course.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Author -->
+            <div class="form-group">
+                <label for="author_id">Instructor *</label>
+                <select id="author_id" name="author_id" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="">Select Instructor...</option>
+                    {% for auth in authors %}
+                    <option value="{{ auth.id }}" {% if course.author_id == auth.id %}selected{% endif %}>{{ auth.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Order -->
+            <div class="form-group">
+                <label for="order">Display Sequence Order *</label>
+                <input type="number" id="order" name="order" class="form-control" value="{{ course.order|default:1 }}" required min="1" placeholder="e.g. 1">
+            </div>
+            
+            <!-- Cover image upload -->
+            <div class="form-group form-full">
+                <label for="cover_file">Cover Image (Upload file or provide URL)</label>
+                <input type="file" id="cover_file" name="cover_file" class="form-control" accept="image/*">
+                
+                <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Or Cover URL:</span>
+                    <input type="text" id="cover_image" name="cover_image" class="form-control" value="{{ course.cover_image }}" placeholder="https://..." style="flex-grow: 1; padding: 6px 12px; font-size: 0.85rem;">
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="form-group form-full">
+                <label for="summary">Course Summary *</label>
+                <textarea id="summary" name="summary" class="form-control" required placeholder="A brief description of this course..." style="min-height: 100px;">{{ course.summary }}</textarea>
+            </div>
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+                <i data-lucide="save"></i>
+                <span>Save Course</span>
+            </button>
+            <a href="{% url 'cms:course_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function generateSlug() {
+        const action = "{{ action }}";
+        if (action === 'Edit') return;
+        
+        const titleVal = document.getElementById('title').value;
+        const slugInput = document.getElementById('slug');
+        
+        const generatedSlug = titleVal
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+            
+        slugInput.value = generatedSlug;
+    }
+</script>
+{% endblock %}

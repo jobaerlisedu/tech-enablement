@@ -1,0 +1,4 @@
+Django==4.2.30
+firebase_admin==7.4.0
+python-dotenv==1.2.1
+requests==2.25.1

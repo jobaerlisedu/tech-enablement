@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Access Control | Tech Enablement</title>
+    
+    <!-- Styling -->
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    
+    <!-- Lucide CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="login-container">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <div class="login-card glass">
+        <div class="login-header">
+            <i data-lucide="shield-check" style="width: 48px; height: 48px; color: var(--primary); margin-bottom: 12px;"></i>
+            <h1 class="login-logo">CMS Control</h1>
+            <p class="login-subtitle">Sign in to manage blogs, courses and users.</p>
+        </div>
+
+        {% if messages %}
+        <ul class="messages" style="margin-bottom: 20px;">
+            {% for message in messages %}
+            <li class="alert alert-{{ message.tags }}">
+                <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
+                <span>{{ message }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form method="POST" action="{% url 'cms:login' %}">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="email">Admin Email Address</label>
+                <div style="position: relative;">
+                    <i data-lucide="mail" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px;"></i>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@techenablement.com" required style="padding-left: 45px; width: 100%;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <i data-lucide="key" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px;"></i>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required style="padding-left: 45px; width: 100%;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                <i data-lucide="log-in"></i>
+                <span>Authenticate User</span>
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="{% url 'frontend:home' %}" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: underline; hover { color: #ffffff; }">
+                Go back to visitor website
+            </a>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

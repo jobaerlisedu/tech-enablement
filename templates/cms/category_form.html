@@ -1,0 +1,72 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}{{ action }} Category | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">{{ action }} Category</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">{{ action }} details for organizing site contents.</p>
+    </div>
+    <a href="{% url 'cms:category_list' %}" class="btn btn-secondary btn-sm">
+        <i data-lucide="arrow-left"></i>
+        <span>Cancel</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="form-grid">
+            <!-- Name -->
+            <div class="form-group">
+                <label for="name">Category Name *</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ category.name }}" required placeholder="e.g. Artificial Intelligence" onkeyup="generateSlug()">
+            </div>
+            
+            <!-- Slug -->
+            <div class="form-group">
+                <label for="slug">URL Slug *</label>
+                <input type="text" id="slug" name="slug" class="form-control" value="{{ category.slug }}" required placeholder="e.g. artificial-intelligence">
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Used in URLs (lowercase, letters, numbers, and dashes only).</span>
+            </div>
+            
+            <!-- Description -->
+            <div class="form-group form-full">
+                <label for="description">Category Description</label>
+                <textarea id="description" name="description" class="form-control" placeholder="Provide a brief summary of topics in this category...">{{ category.description }}</textarea>
+            </div>
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+                <i data-lucide="save"></i>
+                <span>Save Category</span>
+            </button>
+            <a href="{% url 'cms:category_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Automatically generate slug from category name
+    function generateSlug() {
+        const action = "{{ action }}";
+        if (action === 'Edit') return; // Do not overwrite on edit unless requested
+        
+        const nameVal = document.getElementById('name').value;
+        const slugInput = document.getElementById('slug');
+        
+        const generatedSlug = nameVal
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // remove special chars
+            .replace(/[\s_]+/g, '-')  // replace spaces/underscores with dashes
+            .replace(/^-+|-+$/g, ''); // trim dashes
+            
+        slugInput.value = generatedSlug;
+    }
+</script>
+{% endblock %}

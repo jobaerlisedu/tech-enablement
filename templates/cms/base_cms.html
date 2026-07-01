@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CMS Panel | Tech Enablement{% endblock %}</title>
+    
+    <!-- Styling -->
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    
+    <!-- Lucide CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background-color: var(--bg-main); min-height: 100vh;">
+
+    <div class="cms-layout">
+        <!-- Sidebar Navigation (Left Panel) -->
+        <aside class="cms-sidebar">
+            <div class="cms-sidebar-brand">
+                <i data-lucide="settings" style="width: 24px; height: 24px; color: var(--primary);"></i>
+                <span class="cms-sidebar-logo">CMS Control</span>
+            </div>
+            
+            <nav class="cms-sidebar-menu">
+                <a href="{% url 'cms:dashboard' %}" class="cms-menu-item {% if request.resolver_match.view_name == 'cms:dashboard' %}active{% endif %}">
+                    <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'cms:category_list' %}" class="cms-menu-item {% if 'category' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="folders" style="width: 18px; height: 18px;"></i>
+                    <span>Category Management</span>
+                </a>
+                <a href="{% url 'cms:author_list' %}" class="cms-menu-item {% if 'author' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+                    <span>Author Management</span>
+                </a>
+                <a href="{% url 'cms:blog_list' %}" class="cms-menu-item {% if 'blog' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="book-open" style="width: 18px; height: 18px;"></i>
+                    <span>Research Blogs</span>
+                </a>
+                <a href="{% url 'cms:course_list' %}" class="cms-menu-item {% if 'course' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="graduation-cap" style="width: 18px; height: 18px;"></i>
+                    <span>Course Management</span>
+                </a>
+                <a href="{% url 'cms:tutorial_list' %}" class="cms-menu-item {% if 'tutorial' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="book-marked" style="width: 18px; height: 18px;"></i>
+                    <span>Tutorial Management</span>
+                </a>
+                <a href="{% url 'cms:user_list' %}" class="cms-menu-item {% if 'user' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="user-cog" style="width: 18px; height: 18px;"></i>
+                    <span>User Management</span>
+                </a>
+                <a href="{% url 'cms:audit_logs' %}" class="cms-menu-item {% if 'audit' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="shield-alert" style="width: 18px; height: 18px;"></i>
+                    <span>System Audit Log</span>
+                </a>
+                <a href="{% url 'cms:docs' %}" class="cms-menu-item {% if 'docs' in request.resolver_match.view_name %}active{% endif %}">
+                    <i data-lucide="file-text" style="width: 18px; height: 18px;"></i>
+                    <span>CMS Documentations</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Panel (Right Panel) -->
+        <div class="cms-main-container">
+            <!-- Topbar Header -->
+            <header class="cms-topbar">
+                <div class="cms-topbar-left">
+                    <a href="{% url 'frontend:home' %}" class="btn btn-secondary btn-sm" target="_blank">
+                        <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                        <span>Visit Website</span>
+                    </a>
+                </div>
+                
+                <div class="cms-topbar-right">
+                    <!-- User Profile & Logged user info -->
+                    <div class="cms-user-profile">
+                        <div class="cms-user-details" style="text-align: right;">
+                            <span class="cms-user-name">{{ request.session.firebase_user.display_name }}</span>
+                            <span class="cms-user-role">{{ request.session.firebase_user.role }}</span>
+                        </div>
+                        <i data-lucide="user" style="width: 20px; height: 20px; color: var(--accent); padding: 8px; background: rgba(255,255,255,0.05); border-radius: 50%;"></i>
+                    </div>
+                    
+                    <!-- Logout -->
+                    <a href="{% url 'cms:logout' %}" class="btn btn-secondary btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #ef4444; background: rgba(239, 68, 68, 0.05);">
+                        <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content -->
+            <main class="cms-content">
+                <!-- Notifications Block -->
+                {% if messages %}
+                <ul class="messages" style="margin-bottom: 30px;">
+                    {% for message in messages %}
+                    <li class="alert alert-{{ message.tags }}">
+                        <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
+                        <span>{{ message }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% block cms_content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Initialize Icons and Toast Timer -->
+    <script>
+        lucide.createIcons();
+        
+        // Auto fade out notification messages after 4 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.6s ease';
+                setTimeout(() => alert.remove(), 600);
+            });
+        }, 4000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

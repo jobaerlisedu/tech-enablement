@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Tech Enablement CMS{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <span class="hero-tagline">Enablement Platform</span>
+        <h1 class="hero-title">Empower Your Technical Journey</h1>
+        <p class="hero-desc">Access deep-dive technical research and structured courses built for engineers, researchers, and developers.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'frontend:courses' %}" class="btn btn-primary">
+                <i data-lucide="play-circle"></i>
+                <span>Explore Courses</span>
+            </a>
+            <a href="{% url 'frontend:blogs' %}" class="btn btn-secondary">
+                <i data-lucide="book-open"></i>
+                <span>Read Research</span>
+            </a>
+        </div>
+    </div>
+    <div class="hero-img-pane">
+        <div class="hero-glow-card glass">
+            <!-- Glowing tech logo mockup -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; color: var(--accent);">
+                <i data-lucide="cpu" style="width: 80px; height: 80px; stroke-width: 1.2; filter: drop-shadow(0 0 15px var(--accent));"></i>
+                <h3 style="font-size: 1.8rem; background: linear-gradient(135deg, #ffffff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tech Enablement</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 250px;">A modern content system integrated with Python Django and Google Firebase.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Research Blogs -->
+<section class="section-wrapper">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Latest Research Blogs</h2>
+            <p style="color: var(--text-muted); margin-top: 5px;">Discover our newest in-depth writeups and technical releases.</p>
+        </div>
+        <a href="{% url 'frontend:blogs' %}" class="btn btn-secondary btn-sm">
+            <span>All Blogs</span>
+            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+        </a>
+    </div>
+    
+    <div class="card-grid">
+        {% for blog in blogs %}
+        <article class="item-card glass">
+            <div class="card-img-wrapper">
+                <img src="{{ blog.cover_image }}" alt="{{ blog.title }}" class="card-img" onerror="this.src='https://picsum.photos/800/600'">
+                <span class="card-badge">{{ blog.category.name }}</span>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">{{ blog.title }}</h3>
+                <p class="card-summary">{{ blog.summary }}</p>
+                <div class="card-meta">
+                    <img src="{{ blog.author.profile_image }}" alt="{{ blog.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
+                    <div>
+                        <div style="font-weight: 600; color: #ffffff;">{{ blog.author.name }}</div>
+                        <div style="font-size: 0.75rem;">{{ blog.publish_date|date:"M d, Y" }}</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'frontend:blog_detail' slug=blog.slug %}" class="btn btn-primary btn-sm btn-card-action">Read More</a>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <p style="color: var(--text-muted); text-align: center; grid-column: span 3;">No research blogs published yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Courses -->
+<section class="section-wrapper" style="padding-top: 20px;">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Featured Learning Paths</h2>
+            <p style="color: var(--text-muted); margin-top: 5px;">Step-by-step guides and full tutorials to master software engineering skills.</p>
+        </div>
+        <a href="{% url 'frontend:courses' %}" class="btn btn-secondary btn-sm">
+            <span>All Courses</span>
+            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+        </a>
+    </div>
+    
+    <div class="card-grid">
+        {% for course in courses %}
+        <article class="item-card glass">
+            <div class="card-img-wrapper">
+                <img src="{{ course.cover_image }}" alt="{{ course.title }}" class="card-img" onerror="this.src='https://picsum.photos/800/600'">
+                <span class="card-badge">{{ course.category.name }}</span>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">{{ course.title }}</h3>
+                <p class="card-summary">{{ course.summary }}</p>
+                <div class="card-meta">
+                    <img src="{{ course.author.profile_image }}" alt="{{ course.author.name }}" class="author-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
+                    <div>
+                        <div style="font-weight: 600; color: #ffffff;">{{ course.author.name }}</div>
+                        <div style="font-size: 0.75rem;">Instructor</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'frontend:course_detail' slug=course.slug %}" class="btn btn-primary btn-sm btn-card-action">
+                        <span>Get Started</span>
+                        <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <p style="color: var(--text-muted); text-align: center; grid-column: span 3;">No courses published yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

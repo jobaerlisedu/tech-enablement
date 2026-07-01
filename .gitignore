@@ -1,0 +1,28 @@
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Firebase Credentials & secrets
+firebase-credentials.json
+.env
+
+# Local Databases
+db.sqlite3
+
+# Python bytecode & cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django files
+static/staticfiles/
+media/
+debug.log
+
+# IDEs & System files
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,66 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}Tutorial Management | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">Tutorial / Lesson Management</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">Add lessons, sections, and tutorial articles to courses.</p>
+    </div>
+    <a href="{% url 'cms:tutorial_add' %}" class="btn btn-primary btn-sm">
+        <i data-lucide="plus"></i>
+        <span>Add Lesson</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <div class="table-wrapper">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th>Associated Course</th>
+                    <th>Lesson / Tutorial Title</th>
+                    <th>Slug URL</th>
+                    <th>Lesson Order</th>
+                    <th>Status</th>
+                    <th style="text-align: right; width: 120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tut in tutorials %}
+                <tr>
+                    <td style="font-weight: 600; color: var(--accent);">{{ tut.course.title }}</td>
+                    <td style="font-weight: 600; color: #ffffff;">{{ tut.title }}</td>
+                    <td><code>{{ tut.slug }}</code></td>
+                    <td><code style="font-weight: 700; color: var(--primary);">Lesson {{ tut.order }}</code></td>
+                    <td>
+                        {% if tut.status == 'published' %}
+                        <span class="badge badge-published">Active</span>
+                        {% else %}
+                        <span class="badge badge-draft">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="action-buttons" style="justify-content: flex-end;">
+                            <a href="{% url 'cms:tutorial_edit' id=tut.id %}" class="action-btn action-btn-edit" title="Edit Lesson">
+                                <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                            </a>
+                            <a href="{% url 'cms:tutorial_delete' id=tut.id %}" class="action-btn action-btn-delete" title="Delete Lesson" onclick="return confirm('Are you sure you want to delete lesson \'{{ tut.title }}\'?');">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                        No lessons registered yet. Click 'Add Lesson' to get started.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

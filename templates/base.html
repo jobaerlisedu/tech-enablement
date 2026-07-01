@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tech Enablement | Tech Blogs & Courses{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Tech Enablement - Discover in-depth research blogs and structured course-based tutorials on Web Development, AI, and DevOps.{% endblock %}">
+    
+    <!-- Styling -->
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Background Blurs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <a href="{% url 'frontend:home' %}" class="nav-logo">
+            <i data-lucide="terminal"></i>
+            <span>Tech Enablement</span>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li>
+                    <a href="{% url 'frontend:home' %}" class="{% if request.resolver_match.view_name == 'frontend:home' %}active{% endif %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'frontend:blogs' %}" class="{% if request.resolver_match.view_name == 'frontend:blogs' %}active{% endif %}">Blogs</a>
+                </li>
+                <li>
+                    <a href="{% url 'frontend:courses' %}" class="{% if request.resolver_match.view_name == 'frontend:courses' %}active{% endif %}">Courses</a>
+                </li>
+                <li>
+                    <a href="{% url 'cms:login' %}" class="btn btn-secondary btn-sm" style="margin-left: 10px;">
+                        <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+                        <span>CMS Panel</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Notification Toast Messages -->
+    {% if messages %}
+    <div class="page-container" style="padding-bottom: 0; max-width: 800px; margin: 20px auto -20px auto;">
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="alert alert-{{ message.tags }}">
+                <i data-lucide="info" style="width: 18px; height: 18px;"></i>
+                <span>{{ message }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="page-container" style="padding: 0;">
+            <p>&copy; 2026 Tech Enablement CMS Platform. Powered by Django & Firebase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Initialize Icons and Toast Timer -->
+    <script>
+        lucide.createIcons();
+        
+        // Auto fade out notification messages after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.6s ease';
+                setTimeout(() => alert.remove(), 600);
+            });
+        }, 5000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

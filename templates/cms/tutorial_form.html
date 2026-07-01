@@ -1,0 +1,143 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}{{ action }} Lesson | CMS Control{% endblock %}
+
+{% block cms_content %}
+<!-- Include Marked.js for Live Preview -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">{{ action }} Lesson</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">{{ action }} lesson content and course positioning.</p>
+    </div>
+    <a href="{% url 'cms:tutorial_list' %}" class="btn btn-secondary btn-sm">
+        <i data-lucide="arrow-left"></i>
+        <span>Cancel</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="form-grid">
+            <!-- Associated Course -->
+            <div class="form-group">
+                <label for="course_id">Select Course *</label>
+                <select id="course_id" name="course_id" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="">Select Course...</option>
+                    {% for c in courses %}
+                    <option value="{{ c.id }}" {% if tutorial.course_id == c.id %}selected{% endif %}>{{ c.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Title -->
+            <div class="form-group">
+                <label for="title">Lesson Title *</label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ tutorial.title }}" required placeholder="e.g. Setting up django-environ" onkeyup="generateSlug()">
+            </div>
+            
+            <!-- Slug -->
+            <div class="form-group">
+                <label for="slug">URL Slug *</label>
+                <input type="text" id="slug" name="slug" class="form-control" value="{{ tutorial.slug }}" required placeholder="e.g. setting-up-django-environ">
+            </div>
+            
+            <!-- Order -->
+            <div class="form-group">
+                <label for="order">Lesson Sequence Order *</label>
+                <input type="number" id="order" name="order" class="form-control" value="{{ tutorial.order|default:1 }}" required min="1" placeholder="e.g. 1">
+            </div>
+            
+            <!-- Status -->
+            <div class="form-group">
+                <label for="status">Lesson Status *</label>
+                <select id="status" name="status" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="published" {% if tutorial.status == 'published' %}selected{% endif %}>Active</option>
+                    <option value="draft" {% if tutorial.status == 'draft' %}selected{% endif %}>Draft/Hidden</option>
+                </select>
+            </div>
+            
+            <!-- Content & Editor Panel -->
+            <div class="form-group form-full" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="content">Markdown Content *</label>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="togglePreview()">Toggle Live Preview</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;" id="editor-layout">
+                    <!-- Left: Markdown Input -->
+                    <div id="editor-textarea-col">
+                        <textarea id="content" name="content" class="form-control" required placeholder="Write tutorial lesson body in standard Markdown format..." style="min-height: 400px; font-family: monospace; line-height: 1.5; font-size: 0.92rem; width: 100%;" onkeyup="updateLivePreview()">{{ tutorial.content }}</textarea>
+                    </div>
+                    
+                    <!-- Right: Live Render (hidden by default) -->
+                    <div id="preview-col" class="glass" style="display: none; padding: 20px; overflow-y: auto; max-height: 500px; background-color: #0d1117;">
+                        <h4 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; color: var(--accent);">Live Preview</h4>
+                        <div id="markdown-preview-output" class="embed-body" style="padding: 0; background: transparent; color: #c9d1d9; font-size: 0.95rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+                <i data-lucide="save"></i>
+                <span>Save Lesson</span>
+            </button>
+            <a href="{% url 'cms:tutorial_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function generateSlug() {
+        const action = "{{ action }}";
+        if (action === 'Edit') return;
+        
+        const titleVal = document.getElementById('title').value;
+        const slugInput = document.getElementById('slug');
+        
+        const generatedSlug = titleVal
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+            
+        slugInput.value = generatedSlug;
+    }
+
+    let previewVisible = false;
+    function togglePreview() {
+        const previewCol = document.getElementById('preview-col');
+        const editorLayout = document.getElementById('editor-layout');
+        
+        previewVisible = !previewVisible;
+        if (previewVisible) {
+            previewCol.style.display = 'block';
+            editorLayout.style.gridTemplateColumns = '1fr 1fr';
+            updateLivePreview();
+        } else {
+            previewCol.style.display = 'none';
+            editorLayout.style.gridTemplateColumns = '1fr';
+        }
+    }
+
+    function updateLivePreview() {
+        if (!previewVisible) return;
+        const mdText = document.getElementById('content').value;
+        const target = document.getElementById('markdown-preview-output');
+        
+        marked.setOptions({
+            gfm: true,
+            breaks: true
+        });
+        
+        target.innerHTML = marked.parse(mdText);
+    }
+</script>
+{% endblock %}

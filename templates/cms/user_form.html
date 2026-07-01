@@ -1,0 +1,71 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}{{ action }} User | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">{{ action }} CMS User</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">{{ action }} administrative user details and credentials.</p>
+    </div>
+    <a href="{% url 'cms:user_list' %}" class="btn btn-secondary btn-sm">
+        <i data-lucide="arrow-left"></i>
+        <span>Cancel</span>
+    </a>
+</div>
+
+<div class="cms-card glass">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="form-grid">
+            <!-- Display Name -->
+            <div class="form-group">
+                <label for="display_name">Display Name *</label>
+                <input type="text" id="display_name" name="display_name" class="form-control" value="{{ cms_user.display_name }}" required placeholder="e.g. Administrator">
+            </div>
+            
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ cms_user.email }}" placeholder="e.g. admin@techenablement.com" required {% if action == 'Edit' %}disabled style="opacity: 0.5; cursor: not-allowed;"{% endif %}>
+                {% if action == 'Edit' %}
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Email addresses cannot be modified on active accounts for security.</span>
+                {% endif %}
+            </div>
+            
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password {% if action == 'Create' %}*{% else %}(Leave empty to keep current){% endif %}</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" {% if action == 'Create' %}required{% endif %} minlength="6">
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Minimum length of 6 characters required.</span>
+            </div>
+            
+            <!-- Role -->
+            <div class="form-group">
+                <label for="role">System Role *</label>
+                <select id="role" name="role" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="Editor" {% if cms_user.role == 'Editor' %}selected{% endif %}>Editor</option>
+                    <option value="Superadmin" {% if cms_user.role == 'Superadmin' %}selected{% endif %}>Superadmin</option>
+                </select>
+            </div>
+            
+            <!-- Status -->
+            <div class="form-group">
+                <label for="status">User Account Status *</label>
+                <select id="status" name="status" class="form-control" required style="background-color: var(--bg-sidebar); color: white;">
+                    <option value="active" {% if cms_user.status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if cms_user.status == 'inactive' %}selected{% endif %}>Deactivated / Blocked</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+                <i data-lucide="save"></i>
+                <span>Save User Details</span>
+            </button>
+            <a href="{% url 'cms:user_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'cms/base_cms.html' %}
+
+{% block title %}System Audit Logs | CMS Control{% endblock %}
+
+{% block cms_content %}
+<div class="cms-header">
+    <div>
+        <h1 class="cms-title">System Audit Logs</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">Read-only trail of all login and CRUD actions carried out by CMS staff.</p>
+    </div>
+</div>
+
+<div class="cms-card glass">
+    <div class="table-wrapper">
+        <table class="cms-table" id="auditTable">
+            <thead>
+                <tr>
+                    <th style="width: 200px;">Timestamp (UTC)</th>
+                    <th>CMS User</th>
+                    <th>Action</th>
+                    <th>Log Description</th>
+                    <th style="width: 140px;">IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td><code style="color: var(--accent);">{{ log.timestamp|date:"Y-m-d H:i:s" }}</code></td>
+                    <td style="font-weight: 600; color: #ffffff;">{{ log.user_email }}</td>
+                    <td>
+                        <span class="badge {% if 'Delete' in log.action or 'Remove' in log.action %}badge-superadmin{% else %}badge-editor{% endif %}">
+                            {{ log.action }}
+                        </span>
+                    </td>
+                    <td style="color: var(--text-muted); max-width: 450px;">{{ log.details }}</td>
+                    <td><code>{{ log.ip }}</code></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                        No audit logs recorded in the system.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
