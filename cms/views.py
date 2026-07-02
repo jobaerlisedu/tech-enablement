@@ -3,7 +3,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.contrib import messages
 from django.urls import reverse
-from config.firebase_service import db, auth as firebase_auth, bucket, sign_in_with_email_and_password, log_audit
+from config.firebase_service import db, auth as firebase_auth, bucket, sign_in_with_email_and_password, log_audit, get_unsplash_image
 from .decorators import firebase_login_required
 
 def upload_file_to_firebase(file, folder="uploads"):
@@ -362,6 +362,15 @@ def blog_add(request):
             messages.error(request, "Title and Slug are required.")
             return redirect('cms:blog_add')
             
+        category_slug = ""
+        if category_id:
+            try:
+                cat_doc = db.collection('categories').document(category_id).get()
+                if cat_doc.exists:
+                    category_slug = cat_doc.to_dict().get('slug', '')
+            except Exception:
+                pass
+
         doc_ref = db.collection('blogs').document()
         blog_data = {
             'id': doc_ref.id,
@@ -372,7 +381,7 @@ def blog_add(request):
             'category_id': category_id,
             'author_id': author_id,
             'status': status,
-            'cover_image': cover_image or "https://picsum.photos/800/600",
+            'cover_image': cover_image or get_unsplash_image(title, category_slug),
             'publish_date': datetime.utcnow()
         }
         doc_ref.set(blog_data)
@@ -517,6 +526,15 @@ def course_add(request):
             messages.error(request, "Title and Slug are required.")
             return redirect('cms:course_add')
             
+        category_slug = ""
+        if category_id:
+            try:
+                cat_doc = db.collection('categories').document(category_id).get()
+                if cat_doc.exists:
+                    category_slug = cat_doc.to_dict().get('slug', '')
+            except Exception:
+                pass
+
         doc_ref = db.collection('courses').document()
         course_data = {
             'id': doc_ref.id,
@@ -527,7 +545,7 @@ def course_add(request):
             'author_id': author_id,
             'status': status,
             'order': order,
-            'cover_image': cover_image or "https://picsum.photos/800/600"
+            'cover_image': cover_image or get_unsplash_image(title, category_slug)
         }
         doc_ref.set(course_data)
         

@@ -99,3 +99,55 @@ def log_audit(user_email, action, details, request=None):
         db.collection('audit_logs').add(log_entry)
     except Exception as e:
         print(f"Failed to write audit log: {e}")
+
+def get_unsplash_image(title, category_slug=None):
+    """
+    Deterministically retrieve a topic-relevant high-resolution Unsplash image url
+    based on keywords found in the title or category slug.
+    """
+    title_lower = title.lower() if title else ""
+    cat_lower = category_slug.lower() if category_slug else ""
+    
+    # Curated high-quality, topic-relevant Unsplash images
+    cyber_images = [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80"
+    ]
+    cloud_images = [
+        "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1597839219216-a773cb2473e4?auto=format&fit=crop&w=800&q=80"
+    ]
+    ai_images = [
+        "https://images.unsplash.com/photo-1527474305487-b87b222841cc?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1501426026826-31c667bdf23d?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+    ]
+    web_images = [
+        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80"
+    ]
+    generic_images = [
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80"
+    ]
+    
+    # Classify based on title and category
+    if any(k in title_lower or k in cat_lower for k in ['security', 'cyber', 'hack', 'lock', 'protect', 'defense']):
+        img_list = cyber_images
+    elif any(k in title_lower or k in cat_lower for k in ['cloud', 'devops', 'docker', 'kubernetes', 'aws', 'server', 'network']):
+        img_list = cloud_images
+    elif any(k in title_lower or k in cat_lower for k in ['ai', 'intelligence', 'robot', 'ml', 'machine', 'learning', 'neural']):
+        img_list = ai_images
+    elif any(k in title_lower or k in cat_lower for k in ['web', 'html', 'css', 'javascript', 'django', 'react', 'program', 'code', 'develop']):
+        img_list = web_images
+    else:
+        img_list = generic_images
+        
+    # Use deterministic index based on title
+    import hashlib
+    idx = int(hashlib.md5(title_lower.encode('utf-8')).hexdigest(), 16) % len(img_list)
+    return img_list[idx]

@@ -45,6 +45,7 @@ if not firebase_admin._apps:
     })
 
 db = firestore.client()
+from config.firebase_service import get_unsplash_image
 
 import re
 
@@ -120,6 +121,7 @@ def seed_database():
     print(f"Seeded {len(authors)} authors.")
 
     # Helper lists for seeding
+    category_slugs = {cat['id']: cat['slug'] for cat in categories}
     cat_keys = list(category_refs.keys())
     auth_keys = list(author_refs.keys())
 
@@ -159,6 +161,7 @@ def seed_database():
         # Stagger publication dates
         pub_date = datetime.now() - timedelta(days=idx)
         
+        cat_slug = category_slugs.get(cat_id, '')
         blog_data = {
             "id": f"blog-{idx+1:02d}",
             "title": title,
@@ -192,7 +195,7 @@ We will cover the following key topics:
 
 We hope you enjoyed this guide. Let us know your thoughts in the comment section!
 """,
-            "cover_image": f"https://picsum.photos/seed/blog_{idx+1}/800/600",
+            "cover_image": get_unsplash_image(title, cat_slug),
             "category_id": cat_id,
             "author_id": author_id,
             "publish_date": pub_date,
@@ -234,12 +237,13 @@ We hope you enjoyed this guide. Let us know your thoughts in the comment section
         cat_id = cat_keys[idx % len(cat_keys)]
         author_id = auth_keys[idx % len(auth_keys)]
         
+        cat_slug = category_slugs.get(cat_id, '')
         course_data = {
             "id": f"course-{idx+1:02d}",
             "title": title,
             "slug": slug,
             "summary": f"Embark on a comprehensive learning path with '{title}'. Includes videos, quizzes, assignments, and a certificate of completion.",
-            "cover_image": f"https://picsum.photos/seed/course_{idx+1}/800/600",
+            "cover_image": get_unsplash_image(title, cat_slug),
             "category_id": cat_id,
             "author_id": author_id,
             "status": "published",
