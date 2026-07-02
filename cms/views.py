@@ -27,26 +27,6 @@ import os
 # --- AUTHENTICATION ---
 
 def login_view(request):
-    # Ensure at least one Superadmin user exists in Firestore
-    try:
-        admin_query = db.collection('users').where('role', '==', 'Superadmin').limit(1).stream()
-        if not list(admin_query):
-            from django.contrib.auth.hashers import make_password
-            default_admin_uid = "system-admin-uid"
-            user_profile = {
-                "uid": default_admin_uid,
-                "email": "admin@techenablement.com",
-                "display_name": "System Admin",
-                "role": "Superadmin",
-                "status": "active",
-                "password": make_password("AdminPassword123!")
-            }
-            db.collection('users').document(default_admin_uid).set(user_profile)
-            log_audit("System", "Auto-create Admin", "Created default Superadmin user profile in Firestore", request)
-            print("Default System Admin user created in Firestore.")
-    except Exception as e:
-        print(f"Error checking/auto-creating admin user: {e}")
-
     if request.session.get('firebase_user'):
         return redirect('cms:dashboard')
         
