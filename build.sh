@@ -10,3 +10,6 @@ python manage.py migrate
 
 # Collect static files
 python manage.py collectstatic --no-input
+
+# Run the full deployment security checklist — fails the build if critical issues found
+python manage.py check --deploy

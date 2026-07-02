@@ -18,9 +18,10 @@ __pycache__/
 *.pyd
 
 # Django files
-static/staticfiles/
+staticfiles/
 media/
 debug.log
+*.log
 
 # IDEs & System files
 .vscode/

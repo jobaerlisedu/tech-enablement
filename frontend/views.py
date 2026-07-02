@@ -2,6 +2,19 @@ import math
 from django.shortcuts import render, Http404
 from config.firebase_service import db
 
+
+# --- Custom Error Handlers ---
+
+def page_not_found(request, exception=None):
+    """Custom 404 handler — renders branded error page."""
+    return render(request, '404.html', status=404)
+
+
+def server_error(request):
+    """Custom 500 handler — renders branded error page."""
+    return render(request, '500.html', status=500)
+
+
 def resolve_relations():
     """Helper to fetch categories and authors and return them as lookup dicts."""
     categories = {}
