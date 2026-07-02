@@ -19,7 +19,7 @@
         <table class="cms-table">
             <thead>
                 <tr>
-                    <th style="width: 70px;">Photo</th>
+
                     <th>Name</th>
                     <th>Role/Designation</th>
                     <th>Email Address</th>
@@ -29,9 +29,7 @@
             <tbody>
                 {% for author in authors %}
                 <tr>
-                    <td>
-                        <img src="{{ author.profile_image }}" alt="{{ author.name }}" class="author-avatar" style="width: 40px; height: 40px; border: 2px solid var(--primary);" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'">
-                    </td>
+
                     <td style="font-weight: 600;">{{ author.name }}</td>
                     <td><span class="badge badge-editor">{{ author.designation }}</span></td>
                     <td><code>{{ author.email }}</code></td>
@@ -48,7 +46,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
                         No authors registered. Click 'Add Author' to create one.
                     </td>
                 </tr>

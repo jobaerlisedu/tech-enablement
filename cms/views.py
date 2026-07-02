@@ -216,15 +216,6 @@ def author_add(request):
         bio = request.POST.get('bio', '').strip()
         designation = request.POST.get('designation', '').strip()
         email = request.POST.get('email', '').strip()
-        profile_image_url = request.POST.get('profile_image_url', '').strip()
-        
-        # Check for image file upload
-        image_file = request.FILES.get('profile_image_file')
-        if image_file:
-            uploaded_url = upload_file_to_firebase(image_file, "authors")
-            if uploaded_url:
-                profile_image_url = uploaded_url
-                
         if not name or not email:
             messages.error(request, "Name and Email are required.")
             return redirect('cms:author_add')
@@ -235,8 +226,7 @@ def author_add(request):
             'name': name,
             'bio': bio,
             'designation': designation,
-            'email': email,
-            'profile_image': profile_image_url or "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"
+            'email': email
         }
         doc_ref.set(author_data)
         
@@ -262,15 +252,6 @@ def author_edit(request, id):
         bio = request.POST.get('bio', '').strip()
         designation = request.POST.get('designation', '').strip()
         email = request.POST.get('email', '').strip()
-        profile_image_url = request.POST.get('profile_image_url', '').strip()
-        
-        # Check for image file upload
-        image_file = request.FILES.get('profile_image_file')
-        if image_file:
-            uploaded_url = upload_file_to_firebase(image_file, "authors")
-            if uploaded_url:
-                profile_image_url = uploaded_url
-                
         if not name or not email:
             messages.error(request, "Name and Email are required.")
             return redirect('cms:author_edit', id=id)
@@ -281,8 +262,6 @@ def author_edit(request, id):
             'designation': designation,
             'email': email
         }
-        if profile_image_url:
-            update_data['profile_image'] = profile_image_url
             
         doc_ref.update(update_data)
         

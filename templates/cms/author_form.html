@@ -36,17 +36,7 @@
                 <input type="text" id="designation" name="designation" class="form-control" value="{{ author.designation }}" required placeholder="e.g. Senior DevOps Engineer">
             </div>
             
-            <!-- Profile Image Selection -->
-            <div class="form-group">
-                <label for="profile_image_file">Profile Image File (Uploads to Firebase)</label>
-                <input type="file" id="profile_image_file" name="profile_image_file" class="form-control" accept="image/*">
-                
-                <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Or enter Image URL:</span>
-                    <input type="text" id="profile_image_url" name="profile_image_url" class="form-control" value="{{ author.profile_image }}" placeholder="https://..." style="flex-grow: 1; padding: 6px 12px; font-size: 0.85rem;">
-                </div>
-            </div>
-            
+
             <!-- Bio -->
             <div class="form-group form-full">
                 <label for="bio">Bio Description</label>
