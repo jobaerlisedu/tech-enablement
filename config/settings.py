@@ -177,6 +177,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Allow same-origin iframe embedding (for the course reader embed views)
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 
 # --- PRODUCTION STABILITY & SECURITY SETTINGS ---
 # Use signed cookies for stateless, database-free session storage
