@@ -37,9 +37,7 @@ A premium, content-rich Content Management System (CMS) and learning platform bu
 ## 🛠️ Tech Stack
 *   **Frontend**: HTML5, Vanilla CSS3 (Outfit & Inter fonts, glassmorphism, responsive grid), JavaScript ES6.
 *   **Backend**: Python 3.9+, Django 4.2.30.
-*   **Database & Auth**: Google Firebase (Firestore Database, Firebase Storage).
-*   **Serving**: Gunicorn (WSGI), WhiteNoise (static files with cache-busting).
-*   **Deployment**: Render.com.
+*   **Database & Auth**: Google Firebase (Firestore Database, Firebase Auth, Firebase Storage).
 
 ---
 
@@ -49,19 +47,9 @@ A premium, content-rich Content Management System (CMS) and learning platform bu
 Ensure you have Python 3.9+ and `venv` installed on your machine.
 
 ### 2. Environment Variables (`.env`)
-Copy `.env.example` to `.env` and fill in your real values:
-```bash
-cp .env.example .env
-```
-
-Generate a strong `SECRET_KEY`:
-```bash
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
-
-Required variables:
+Create a `.env` file in the root directory with the following variables:
 ```env
-DJANGO_SECRET_KEY=your-long-random-secret-key
+DJANGO_SECRET_KEY=your-django-secret-key
 DEBUG=True
 ALLOWED_HOSTS=*
 FIREBASE_CREDENTIALS_PATH=firebase-credentials.json
@@ -97,7 +85,13 @@ Run Django migrations to create the local session cache table:
 python manage.py migrate
 ```
 
-### 3. Start Development Server
+### 3. Seed Database
+Execute the Firebase database seeder. This will clear existing collections and register categories, authors, 24 blogs, 24 courses, tutorial lessons, and create the default superadmin user:
+```bash
+python seed_firebase.py
+```
+
+### 4. Start Development Server
 ```bash
 python manage.py runserver 0.0.0.0:8000
 ```

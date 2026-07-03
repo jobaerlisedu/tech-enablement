@@ -23,6 +23,3 @@ urlpatterns = [
     path('', include('frontend.urls')),
 ]
 
-# Custom error handlers
-handler404 = 'frontend.views.page_not_found'
-handler500 = 'frontend.views.server_error'

@@ -166,10 +166,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise: compress + add cache-busting hashes to filenames
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# Browser cache lifetime for static assets (1 year)
-WHITENOISE_MAX_AGE = 31536000
+# Enable WhiteNoise compression
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -182,86 +180,28 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Allow same-origin iframe embedding (for the course reader embed views)
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-# Silence the deploy check for X_FRAME_OPTIONS — SAMEORIGIN is intentional
-# for the embedded course lesson reader iframes.
-SILENCED_SYSTEM_CHECKS = ['security.W019']
-
 
 # --- PRODUCTION STABILITY & SECURITY SETTINGS ---
 # Use signed cookies for stateless, database-free session storage
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
-# Session hardening — apply in all environments
-SESSION_COOKIE_HTTPONLY = True   # JS cannot access session cookie
-SESSION_COOKIE_AGE = 28800       # 8-hour session lifetime (seconds)
-CSRF_COOKIE_HTTPONLY = True      # JS cannot access CSRF cookie
-
-# Security headers that are safe to enable in all environments
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-
-# Database connection age (0 = close after each request — safe for all hosts)
-CONN_MAX_AGE = 0
-
 if not DEBUG:
     # Enforce SSL redirection
     SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
-
-    # Secure cookie transport (HTTPS only)
+    
+    # Secure cookie transport
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-
+    
     # Headers for secure hosting behind reverse proxies (like Render load balancers)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-    # Strict Transport Security (HSTS) — 1 year, include subdomains, preload
-    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))
+    
+    # Security header enforcements
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Strict Transport Security (HSTS)
+    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))  # 1 year default
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-
-
-# --- LOGGING ---
-LOG_LEVEL = os.getenv('LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '[{asctime}] {levelname} {name} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'debug.log',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'] if not DEBUG else ['console', 'file'],
-        'level': LOG_LEVEL,
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'] if not DEBUG else ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console'] if not DEBUG else ['console', 'file'],
-            'level': 'WARNING',
-            'propagate': False,
-        },
-    },
-}
 
