@@ -24,7 +24,14 @@
             <i data-lucide="terminal"></i>
             <span>Tech Enablement</span>
         </a>
-        <nav>
+        
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">
+            <i data-lucide="menu" id="menuIconOpen"></i>
+            <i data-lucide="x" id="menuIconClose" style="display: none;"></i>
+        </button>
+
+        <nav id="navMenu">
             <ul class="nav-links">
                 <li>
                     <a href="{% url 'frontend:home' %}" class="{% if request.resolver_match.view_name == 'frontend:home' %}active{% endif %}">Home</a>
@@ -36,7 +43,7 @@
                     <a href="{% url 'frontend:courses' %}" class="{% if request.resolver_match.view_name == 'frontend:courses' %}active{% endif %}">Courses</a>
                 </li>
                 <li>
-                    <a href="{% url 'cms:login' %}" class="btn btn-secondary btn-sm" style="margin-left: 10px;">
+                    <a href="{% url 'cms:login' %}" class="btn btn-secondary btn-sm nav-cms-btn">
                         <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
                         <span>CMS Panel</span>
                     </a>
@@ -69,6 +76,29 @@
     <script>
         lucide.createIcons();
         
+        function toggleMobileNav() {
+            const navMenu = document.getElementById('navMenu');
+            const openIcon = document.getElementById('menuIconOpen');
+            const closeIcon = document.getElementById('menuIconClose');
+            if (!navMenu) return;
+            
+            const isExpanded = navMenu.classList.toggle('active');
+            
+            if (openIcon && closeIcon) {
+                openIcon.style.display = isExpanded ? 'none' : 'block';
+                closeIcon.style.display = isExpanded ? 'block' : 'none';
+            }
+        }
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function(e) {
+            const navMenu = document.getElementById('navMenu');
+            const toggleBtn = document.getElementById('mobileNavToggle');
+            if (navMenu && navMenu.classList.contains('active') && !navMenu.contains(e.target) && !toggleBtn.contains(e.target)) {
+                toggleMobileNav();
+            }
+        });
+
         // Auto fade out notification messages after 5 seconds
         setTimeout(() => {
             const alerts = document.querySelectorAll('.alert');

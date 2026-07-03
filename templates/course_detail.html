@@ -4,8 +4,16 @@
 
 {% block content %}
 <div class="course-viewer">
+    <!-- Mobile Sidebar Drawer Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleCourseSidebar()"></div>
+
     <!-- Left Sidebar: Tutorial Index -->
-    <aside class="course-sidebar">
+    <aside class="course-sidebar" id="courseSidebar">
+        <!-- Close button for mobile -->
+        <button class="mobile-sidebar-close" onclick="toggleCourseSidebar()">
+            <i data-lucide="x"></i>
+        </button>
+
         <!-- Back Button -->
         <a href="{% url 'frontend:courses' %}" class="back-btn">
             <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
@@ -40,6 +48,15 @@
 
     <!-- Right Panel: Lesson View -->
     <section class="course-content-pane">
+        <!-- Mobile Header Bar with Lessons Drawer Toggle -->
+        <div class="mobile-course-header">
+            <button class="btn btn-secondary btn-sm" onclick="toggleCourseSidebar()">
+                <i data-lucide="list" style="width: 16px; height: 16px;"></i>
+                <span>Lessons Index</span>
+            </button>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;" id="mobileLessonTitle">Lesson 1</span>
+        </div>
+
         <!-- Iframe Container -->
         <div class="iframe-container">
             {% if tutorials %}
@@ -56,13 +73,13 @@
         <div class="course-navigator">
             <button class="btn btn-secondary btn-sm" id="prevBtn" onclick="navigateTutorial(-1)">
                 <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
-                <span>Previous Lesson</span>
+                <span class="nav-btn-text">Previous</span>
             </button>
             <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;" id="navProgress">
                 Lesson <span id="currentLessonNum">1</span> of {{ tutorials|length }}
             </div>
             <button class="btn btn-primary btn-sm" id="nextBtn" onclick="navigateTutorial(1)">
-                <span>Next Lesson</span>
+                <span class="nav-btn-text">Next</span>
                 <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
             </button>
         </div>
@@ -99,6 +116,17 @@
         });
     }
 
+    function toggleCourseSidebar() {
+        const sidebar = document.getElementById('courseSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        if (!sidebar) return;
+        
+        const isShown = sidebar.classList.toggle('open');
+        if (backdrop) {
+            backdrop.classList.toggle('show', isShown);
+        }
+    }
+
     // Function to load a tutorial in the iframe
     function loadTutorial(index) {
         if (index < 0 || index >= tutorials.length) return;
@@ -118,6 +146,20 @@
         
         // Update iframe source
         document.getElementById('tutorialIframe').src = tutorial.url;
+        
+        // Update mobile header lesson title
+        const mobileTitle = document.getElementById('mobileLessonTitle');
+        if (mobileTitle) {
+            mobileTitle.textContent = `Lesson ${index + 1}: ${tutorial.title}`;
+        }
+
+        // Close sidebar drawer on mobile
+        const sidebar = document.getElementById('courseSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        if (sidebar && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('show');
+        }
         
         // Update progress indicators & buttons
         updateNavigationControls();

@@ -14,7 +14,7 @@
     </a>
 
     <!-- Blog Header -->
-    <header style="margin-bottom: 40px;">
+    <header class="blog-header" style="margin-bottom: 40px;">
         <span class="card-badge" style="position: static; display: inline-block; margin-bottom: 15px;">{{ blog.category.name }}</span>
         <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 20px;">{{ blog.title }}</h1>
         
@@ -30,12 +30,12 @@
     <!-- Unified Blog Card -->
     <article class="glass" style="padding: 0; overflow: hidden; margin-bottom: 60px;">
         <!-- Cover Image -->
-        <div style="width: 100%; height: 450px; border-bottom: 1px solid var(--border-color); overflow: hidden;">
+        <div class="blog-cover-wrapper" style="width: 100%; height: 450px; border-bottom: 1px solid var(--border-color); overflow: hidden;">
             <img src="{{ blog.cover_image }}" alt="{{ blog.title }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://picsum.photos/1200/800'">
         </div>
 
         <!-- Blog Body Content -->
-        <div style="padding: 40px;">
+        <div class="blog-body-padding" style="padding: 40px;">
             <!-- Container for Markdown parsing -->
             <div id="blog-markdown-content" class="embed-body" style="padding: 0; background: transparent; color: var(--text-primary); max-width: 100%;">
                 <!-- Raw Markdown source placeholder via json_script -->
