@@ -9,17 +9,17 @@
     <!-- Styling -->
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     
-    <!-- Lucide CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/tech-enablement-favicon.png' %}">
 </head>
 <body style="background-color: var(--bg-main); min-height: 100vh;">
 
     <div class="cms-layout">
         <!-- Sidebar Navigation (Left Panel) -->
         <aside class="cms-sidebar">
-            <div class="cms-sidebar-brand">
-                <i data-lucide="settings" style="width: 24px; height: 24px; color: var(--primary);"></i>
-                <span class="cms-sidebar-logo">CMS Control</span>
+            <div class="cms-sidebar-brand" style="border-bottom: none; display: flex; align-items: center; gap: 10px; padding: 20px;">
+                <img src="{% static 'images/tech-enablement-logo.png' %}" alt="Tech Enablement Logo" style="height: 32px; width: auto; object-fit: contain;">
+                <span class="cms-sidebar-logo" style="font-size: 1.1rem; font-weight: 700;">CMS Control</span>
             </div>
             
             <nav class="cms-sidebar-menu">

@@ -12,6 +12,8 @@
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/tech-enablement-favicon.png' %}">
 </head>
 <body>
     <!-- Background Blurs -->
@@ -20,9 +22,8 @@
 
     <!-- Navigation Header -->
     <header class="navbar">
-        <a href="{% url 'frontend:home' %}" class="nav-logo">
-            <i data-lucide="terminal"></i>
-            <span>Tech Enablement</span>
+        <a href="{% url 'frontend:home' %}" class="nav-logo" style="background: transparent; -webkit-text-fill-color: initial; background-clip: initial; -webkit-background-clip: initial;">
+            <img src="{% static 'images/tech-enablement-logo.png' %}" alt="Tech Enablement Logo" style="height: 35px; width: auto; max-width: 100%; object-fit: contain; display: block;">
         </a>
         
         <!-- Mobile Menu Toggle Button -->

@@ -9,8 +9,8 @@
     <!-- Styling -->
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     
-    <!-- Lucide CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/tech-enablement-favicon.png' %}">
 </head>
 <body class="login-container">
     <div class="bg-orb orb-1"></div>
@@ -18,7 +18,7 @@
 
     <div class="login-card glass">
         <div class="login-header">
-            <i data-lucide="shield-check" style="width: 48px; height: 48px; color: var(--primary); margin-bottom: 12px;"></i>
+            <img src="{% static 'images/tech-enablement-logo.png' %}" alt="Tech Enablement Logo" style="height: 48px; width: auto; object-fit: contain; margin-bottom: 15px;">
             <h1 class="login-logo">CMS Control</h1>
             <p class="login-subtitle">Sign in to manage blogs, courses and users.</p>
         </div>
