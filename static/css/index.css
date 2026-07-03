@@ -812,8 +812,43 @@ a {
     background-color: transparent;
     padding: 0;
     border-radius: 0;
-    color: #e6edf3;
+    color: inherit;
 }
+
+.embed-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    display: table;
+}
+
+.embed-body th, .embed-body td {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.embed-body th {
+    background-color: rgba(0, 0, 0, 0.03);
+    font-weight: 600;
+}
+
+.embed-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 16px 0;
+}
+
+.embed-body blockquote {
+    border-left: 4px solid var(--accent);
+    padding-left: 16px;
+    margin: 16px 0;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
 
 
 /* --- CMS BACKEND STYLE SYSTEM --- */

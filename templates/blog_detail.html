@@ -38,8 +38,8 @@
         <div style="padding: 40px;">
             <!-- Container for Markdown parsing -->
             <div id="blog-markdown-content" class="embed-body" style="padding: 0; background: transparent; color: var(--text-primary); max-width: 100%;">
-                <!-- Raw Markdown source placeholder -->
-                <script type="text/plain" id="raw-markdown">{{ blog.content }}</script>
+                <!-- Raw Markdown source placeholder via json_script -->
+                {{ blog.content|json_script:"raw-markdown-data" }}
             </div>
         </div>
     </article>
@@ -52,33 +52,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 
 <script>
-    // Initialize Markdown and syntax highlighting
     document.addEventListener("DOMContentLoaded", function() {
-        const rawContent = document.getElementById("raw-markdown").textContent;
+        const rawDataElem = document.getElementById("raw-markdown-data");
+        if (!rawDataElem) return;
+        
+        const rawContent = JSON.parse(rawDataElem.textContent);
         const targetDiv = document.getElementById("blog-markdown-content");
+        
+        // Parse markdown string with GFM and line breaks enabled
+        targetDiv.innerHTML = marked.parse(rawContent, { gfm: true, breaks: true });
 
-        // Modern marked.js API: use a custom renderer so raw HTML in Markdown
-        // is passed through unescaped (fixes HTML tags showing as plain text).
-        const renderer = new marked.Renderer();
-        renderer.code = function(code, lang) {
-            const language = (lang && hljs.getLanguage(lang)) ? lang : 'plaintext';
-            const highlighted = hljs.highlight(code, { language }).value;
-            return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
-        };
-
-        marked.use({
-            renderer: renderer,
-            gfm: true,
-            breaks: true,
-            mangle: false,
-            headerIds: false
+        // Highlight code blocks inside rendered content
+        targetDiv.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
         });
 
-        // Render HTML
-        targetDiv.innerHTML = marked.parse(rawContent);
-
         // Reinitialize lucide icons inside rendered markdown if any
-        lucide.createIcons();
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     });
 </script>
 {% endblock %}

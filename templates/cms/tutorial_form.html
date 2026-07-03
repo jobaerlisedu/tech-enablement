@@ -3,8 +3,10 @@
 {% block title %}{{ action }} Lesson | CMS Control{% endblock %}
 
 {% block cms_content %}
-<!-- Include Marked.js for Live Preview -->
+<!-- Include Marked.js & Highlight.js for Live Preview -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
 
 <div class="cms-header">
     <div>
@@ -69,7 +71,7 @@
                 <div style="display: grid; grid-template-columns: 1fr; gap: 20px;" id="editor-layout">
                     <!-- Left: Markdown Input -->
                     <div id="editor-textarea-col">
-                        <textarea id="content" name="content" class="form-control" required placeholder="Write tutorial lesson body in standard Markdown format..." style="min-height: 400px; font-family: monospace; line-height: 1.5; font-size: 0.92rem; width: 100%;" onkeyup="updateLivePreview()">{{ tutorial.content }}</textarea>
+                        <textarea id="content" name="content" class="form-control" required placeholder="Write tutorial lesson body in standard Markdown format..." style="min-height: 400px; font-family: monospace; line-height: 1.5; font-size: 0.92rem; width: 100%;" oninput="updateLivePreview()" onkeyup="updateLivePreview()">{{ tutorial.content }}</textarea>
                     </div>
                     
                     <!-- Right: Live Render (hidden by default) -->
@@ -132,12 +134,17 @@
         const mdText = document.getElementById('content').value;
         const target = document.getElementById('markdown-preview-output');
         
-        marked.setOptions({
-            gfm: true,
-            breaks: true
-        });
+        target.innerHTML = marked.parse(mdText, { gfm: true, breaks: true });
+
+        if (window.hljs) {
+            target.querySelectorAll('pre code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        }
         
-        target.innerHTML = marked.parse(mdText);
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     }
 </script>
 {% endblock %}

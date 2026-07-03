@@ -124,8 +124,6 @@
             border-collapse: collapse;
             width: 100%;
             margin-bottom: 24px;
-            overflow-x: auto;
-            display: block;
         }
 
         table th, table td {
@@ -166,8 +164,8 @@
         <div id="markdown-output">Loading content...</div>
     </div>
 
-    <!-- Hidden Raw Markdown Data -->
-    <script type="text/plain" id="raw-markdown-data">{{ tutorial.content }}</script>
+    <!-- Raw Markdown source placeholder via json_script -->
+    {{ tutorial.content|json_script:"raw-markdown-data" }}
 
     <!-- Markdown Parser & Code Highlighter -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -175,28 +173,19 @@
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const rawContent = document.getElementById("raw-markdown-data").textContent;
+            const rawDataElem = document.getElementById("raw-markdown-data");
+            if (!rawDataElem) return;
+            
+            const rawContent = JSON.parse(rawDataElem.textContent);
             const targetDiv = document.getElementById("markdown-output");
 
-            // Modern marked.js API: use a custom renderer so raw HTML in Markdown
-            // is passed through unescaped (fixes HTML tags showing as plain text).
-            const renderer = new marked.Renderer();
-            renderer.code = function(code, lang) {
-                const language = (lang && hljs.getLanguage(lang)) ? lang : 'plaintext';
-                const highlighted = hljs.highlight(code, { language }).value;
-                return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
-            };
+            // Compile marked to html with GFM and line breaks enabled
+            targetDiv.innerHTML = marked.parse(rawContent, { gfm: true, breaks: true });
 
-            marked.use({
-                renderer: renderer,
-                gfm: true,
-                breaks: true,
-                mangle: false,
-                headerIds: false
+            // Highlight code blocks inside rendered content
+            targetDiv.querySelectorAll('pre code').forEach(function(block) {
+                hljs.highlightElement(block);
             });
-
-            // Compile marked to html
-            targetDiv.innerHTML = marked.parse(rawContent);
         });
     </script>
 </body>
