@@ -56,22 +56,30 @@
     document.addEventListener("DOMContentLoaded", function() {
         const rawContent = document.getElementById("raw-markdown").textContent;
         const targetDiv = document.getElementById("blog-markdown-content");
-        
-        // Configure marked options
-        marked.setOptions({
-            highlight: function(code, lang) {
-                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                return hljs.highlight(code, { language }).value;
-            },
+
+        // Modern marked.js API: use a custom renderer so raw HTML in Markdown
+        // is passed through unescaped (fixes HTML tags showing as plain text).
+        const renderer = new marked.Renderer();
+        renderer.code = function(code, lang) {
+            const language = (lang && hljs.getLanguage(lang)) ? lang : 'plaintext';
+            const highlighted = hljs.highlight(code, { language }).value;
+            return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
+        };
+
+        marked.use({
+            renderer: renderer,
             gfm: true,
-            breaks: true
+            breaks: true,
+            mangle: false,
+            headerIds: false
         });
-        
-        // Render html
+
+        // Render HTML
         targetDiv.innerHTML = marked.parse(rawContent);
-        
+
         // Reinitialize lucide icons inside rendered markdown if any
         lucide.createIcons();
     });
 </script>
 {% endblock %}
+
