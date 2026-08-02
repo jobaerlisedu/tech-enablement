@@ -103,7 +103,7 @@ python manage.py runserver 0.0.0.0:8000
 
 ## 🔑 Default Administrator Credentials
 *   **Admin Email**: `admin@techenablement.com`
-*   **Admin Password**: `AdminPassword123!`
+*   **Admin Password**: `Lp$S66Rg1%1Gmhqn6aza`
 
 ---
 

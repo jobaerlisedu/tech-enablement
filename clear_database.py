@@ -66,7 +66,7 @@ def clear_database():
             "display_name": "System Admin",
             "role": "Superadmin",
             "status": "active",
-            "password": make_password("AdminPassword123!")
+            "password": make_password("Lp$S66Rg1%1Gmhqn6aza")
         }
         db.collection('users').document(default_admin_uid).set(user_profile)
         print("Default System Admin user profile seeded successfully.")
