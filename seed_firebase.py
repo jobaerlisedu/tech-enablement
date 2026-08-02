@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 
 import firebase_admin
 from firebase_admin import credentials, firestore
+from django.utils.text import slugify
 
 import dotenv
 dotenv.load_dotenv()
@@ -135,7 +136,7 @@ def seed_blogs(cat_ids, author_ids):
     ]
     for i, (title, cat_slug, ai) in enumerate(blog_specs):
         ref = db.collection('blogs').document()
-        slug = title.lower().replace(" ", "-")
+        slug = slugify(title)
         ref.set({
             "id": ref.id,
             "title": title,
@@ -182,7 +183,7 @@ def seed_courses(cat_ids, author_ids):
     ]
     for (title, cat_slug, ai, order) in course_specs:
         ref = db.collection('courses').document()
-        slug = title.lower().replace(" ", "-")
+        slug = slugify(title)
         ref.set({
             "id": ref.id,
             "title": title,

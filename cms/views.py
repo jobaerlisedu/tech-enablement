@@ -3,6 +3,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.contrib import messages
 from django.urls import reverse
+from django.utils.text import slugify
 from config.firebase_service import db, auth as firebase_auth, bucket, sign_in_with_email_and_password, log_audit, get_unsplash_image
 from .decorators import firebase_login_required
 
@@ -127,7 +128,7 @@ def category_list(request):
 def category_add(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         description = request.POST.get('description', '').strip()
         
         if not name or not slug:
@@ -163,7 +164,7 @@ def category_edit(request, id):
     
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         description = request.POST.get('description', '').strip()
         
         if not name or not slug:
@@ -322,7 +323,7 @@ def blog_add(request):
     
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         summary = request.POST.get('summary', '').strip()
         content = request.POST.get('content', '').strip()
         category_id = request.POST.get('category_id', '').strip()
@@ -393,7 +394,7 @@ def blog_edit(request, id):
     
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         summary = request.POST.get('summary', '').strip()
         content = request.POST.get('content', '').strip()
         category_id = request.POST.get('category_id', '').strip()
@@ -486,7 +487,7 @@ def course_add(request):
     
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         summary = request.POST.get('summary', '').strip()
         category_id = request.POST.get('category_id', '').strip()
         author_id = request.POST.get('author_id', '').strip()
@@ -556,7 +557,7 @@ def course_edit(request, id):
     
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         summary = request.POST.get('summary', '').strip()
         category_id = request.POST.get('category_id', '').strip()
         author_id = request.POST.get('author_id', '').strip()
@@ -654,7 +655,7 @@ def tutorial_add(request):
     if request.method == 'POST':
         course_id = request.POST.get('course_id', '').strip()
         title = request.POST.get('title', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         content = request.POST.get('content', '').strip()
         order = int(request.POST.get('order', 1))
         status = request.POST.get('status', 'published').strip()
@@ -700,7 +701,7 @@ def tutorial_edit(request, id):
     if request.method == 'POST':
         course_id = request.POST.get('course_id', '').strip()
         title = request.POST.get('title', '').strip()
-        slug = request.POST.get('slug', '').strip().lower().replace(" ", "-")
+        slug = slugify(request.POST.get('slug', '').strip())
         content = request.POST.get('content', '').strip()
         order = int(request.POST.get('order', 1))
         status = request.POST.get('status', 'published').strip()
