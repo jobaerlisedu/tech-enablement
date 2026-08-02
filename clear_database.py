@@ -53,23 +53,10 @@ def clear_database():
             deleted += 1
         print(f"Cleared {deleted} documents from '{col_name}' collection.")
 
-    # Re-seed the default Superadmin user profile so they can immediately log in
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-    import django
+    # Idempotently bootstrap the superadmin (only if no user exists yet).
+    from seed_superuser import ensure_superuser
     try:
-        django.setup()
-        from django.contrib.auth.hashers import make_password
-        default_admin_uid = "system-admin-uid"
-        user_profile = {
-            "uid": default_admin_uid,
-            "email": "admin@techenablement.com",
-            "display_name": "System Admin",
-            "role": "Superadmin",
-            "status": "active",
-            "password": make_password("Lp$S66Rg1%1Gmhqn6aza")
-        }
-        db.collection('users').document(default_admin_uid).set(user_profile)
-        print("Default System Admin user profile seeded successfully.")
+        ensure_superuser(db)
     except Exception as e:
         print(f"Failed to seed default admin user: {e}")
 
