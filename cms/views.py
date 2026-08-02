@@ -329,14 +329,16 @@ def blog_add(request):
         category_id = request.POST.get('category_id', '').strip()
         author_id = request.POST.get('author_id', '').strip()
         status = request.POST.get('status', 'draft').strip()
-        cover_image = request.POST.get('cover_image', '').strip()
         
-        # File upload
+        # Cover image: only the uploaded file is used (no URL field).
+        cover_image = ""
         cover_file = request.FILES.get('cover_file')
         if cover_file:
             uploaded_url = upload_file_to_firebase(cover_file, "blogs")
             if uploaded_url:
                 cover_image = uploaded_url
+            else:
+                messages.error(request, "Cover image upload failed. Please verify Firebase Storage is enabled.")
                 
         if not title or not slug:
             messages.error(request, "Title and Slug are required.")
@@ -400,14 +402,19 @@ def blog_edit(request, id):
         category_id = request.POST.get('category_id', '').strip()
         author_id = request.POST.get('author_id', '').strip()
         status = request.POST.get('status', 'draft').strip()
-        cover_image = request.POST.get('cover_image', '').strip()
         
-        # File upload
+        # Cover image: only the uploaded file is used. On success it replaces the
+        # existing cover; if no file is provided the current image is kept.
+        cover_image = blog.get('cover_image', '')
         cover_file = request.FILES.get('cover_file')
+        uploaded_ok = True
         if cover_file:
             uploaded_url = upload_file_to_firebase(cover_file, "blogs")
             if uploaded_url:
                 cover_image = uploaded_url
+            else:
+                uploaded_ok = False
+                messages.error(request, "Cover image upload failed. Please verify Firebase Storage is enabled.")
                 
         if not title or not slug:
             messages.error(request, "Title and Slug are required.")
@@ -493,14 +500,16 @@ def course_add(request):
         author_id = request.POST.get('author_id', '').strip()
         status = request.POST.get('status', 'draft').strip()
         order = int(request.POST.get('order', 1))
-        cover_image = request.POST.get('cover_image', '').strip()
         
-        # File upload
+        # Cover image: only the uploaded file is used (no URL field).
+        cover_image = ""
         cover_file = request.FILES.get('cover_file')
         if cover_file:
             uploaded_url = upload_file_to_firebase(cover_file, "courses")
             if uploaded_url:
                 cover_image = uploaded_url
+            else:
+                messages.error(request, "Cover image upload failed. Please verify Firebase Storage is enabled.")
                 
         if not title or not slug:
             messages.error(request, "Title and Slug are required.")
@@ -563,14 +572,17 @@ def course_edit(request, id):
         author_id = request.POST.get('author_id', '').strip()
         status = request.POST.get('status', 'draft').strip()
         order = int(request.POST.get('order', 1))
-        cover_image = request.POST.get('cover_image', '').strip()
         
-        # File upload
+        # Cover image: only the uploaded file is used. If no new file is chosen
+        # the existing cover is preserved.
+        cover_image = course.get('cover_image', '')
         cover_file = request.FILES.get('cover_file')
         if cover_file:
             uploaded_url = upload_file_to_firebase(cover_file, "courses")
             if uploaded_url:
                 cover_image = uploaded_url
+            else:
+                messages.error(request, "Cover image upload failed. Please verify Firebase Storage is enabled.")
                 
         if not title or not slug:
             messages.error(request, "Title and Slug are required.")

@@ -69,13 +69,8 @@
             
             <!-- Cover image upload -->
             <div class="form-group form-full">
-                <label for="cover_file">Cover Image (Upload file or provide URL)</label>
+                <label for="cover_file">Cover Image (Upload)</label>
                 <input type="file" id="cover_file" name="cover_file" class="form-control" accept="image/*">
-                
-                <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Or Cover URL:</span>
-                    <input type="text" id="cover_image" name="cover_image" class="form-control" value="{{ course.cover_image }}" placeholder="https://..." style="flex-grow: 1; padding: 6px 12px; font-size: 0.85rem;">
-                </div>
             </div>
 
             <!-- Summary -->
